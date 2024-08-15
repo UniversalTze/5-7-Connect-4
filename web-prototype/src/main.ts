@@ -1,24 +1,61 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./style.css";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+import { Arduino } from "./arduino.ts";
+import { BOARD_HEIGHT, BOARD_WIDTH } from "./constants.ts";
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const board: HTMLElement = document.getElementById("board")!;
+const rows = BOARD_HEIGHT;
+const cols = BOARD_WIDTH;
+
+// Initialise game HTML
+board.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+board.style.gridTemplateRows = `repeat(${rows}, 80px)`;
+
+for (let i = 0; i < rows * cols; i++) {
+  const cell: HTMLDivElement = document.createElement("div");
+  cell.classList.add("cell");
+  cell.dataset.col = (i % cols).toString();
+  cell.dataset.row = Math.floor(i / cols).toString();
+  cell.addEventListener("click", placeToken);
+  board.appendChild(cell);
+}
+
+function placeToken(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  const col = parseInt(target!.dataset!.col!);
+
+  arduino.columnInput = col;
+}
+
+function setDisplayNumber(display: number, number: number) {
+  const displayElement = document.querySelector(
+    `#display-${display}`
+  ) as HTMLElement;
+  if (display != null) {
+    displayElement.innerHTML = number.toString();
+  }
+}
+
+function setPixelColor(row: number, col: number, colour: string) {
+  const tokenCell = document.querySelector(
+    `[data-col="${col}"][data-row="${row}"]`
+  ) as HTMLElement;
+  if (tokenCell != null) {
+    tokenCell.style.backgroundColor = colour;
+  }
+}
+
+// Initialise pretend Arduino
+const arduino = new Arduino(setPixelColor, setDisplayNumber);
+
+// Expose arduino to the global window object
+(window as any).arduino = arduino;
+
+arduino.setup();
+
+function loop() {
+  arduino.loop();
+  requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
