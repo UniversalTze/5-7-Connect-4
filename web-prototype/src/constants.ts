@@ -12,3 +12,4 @@ export const PLAYER_COLOR = ["#cf4242", "#ddaf24"];
 export const FULL_CLEAR = 1;
 
 export const MAX_COMBO_LENGTH = 6;
+export const MIN_COMBO_LENGTH = 4;
