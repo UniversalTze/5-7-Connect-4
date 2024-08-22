@@ -1,6 +1,7 @@
 // THIS FILE IS MEANT TO EMULATE ARDUINO CODE
 
 import * as constants from "./constants.ts";
+import { Game } from "./Game.ts";
 
 export class Arduino {
   // TODO: input should probably be handled elsewhere, like inputhandler
@@ -13,6 +14,7 @@ export class Arduino {
   interval: number = 1000;
   ledState: number = 0;
   numberState: number = 0;
+  game: Game = new Game();
 
   constructor(
     setPixelColor: (row: number, col: number, colour: string) => void,
