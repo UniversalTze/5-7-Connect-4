@@ -1,48 +1,123 @@
 // Any import statements come above this. 
+import { NO_INPUT } from "./constants";
+import { Player } from "./Player";
 
 const WINNING_SCORE = 21;  
-const TURN_TIME = 10; // represent time in seconds
-const ROTATE = 120; // constatn for now (2 minutes)
+const TURN_TIME = 30000; //30 secodns in milliseconds
+const ROTATE_BOARD = 120000; // 2 minutes in milliseconds 
+// Still need to set interval for this board, and need reference to board variable 
+// to complete this function. 
+
 export class Game {
-  
-  private p1Score: Number; // instead of number variable it will be player entities. 
-  private p2Score: Number; 
-  private player1turn: Boolean; 
+  // Asynchornous function to keep track of if player has moved or not. 
+  // In C++ we can use a thread to detect if something has been entered. 
+  private moveTimeoutId: ReturnType<typeof setTimeout> | null = null;  
+  private rotateIntervalId: ReturnType<typeof setTimeout> | null = null; 
+  private player1turn: boolean; 
+  private p1haswon: boolean;
+  private p2haswon: boolean; 
+  private player1: Player
+  private player2: Player
 
   constructor() {
     //leave constructor as empty for now
     // for future reference, Reference to board will be needed to start game. 
 
-    // current logic for determining win, it will be the negation of player turn. 
     // Their turn will have been set to false, unless we want to check score first before 
     // changin turn. (that switch turn will be down at the last one)
 
-    
-    this.p1Score = 0;
-    this.p2Score = 0; // these will be changes. 
+    this.player1 = new Player(0, "Player1"); 
+    this.player2 = new Player(0, "Player2"); 
     this.player1turn = true;  
+    this.p1haswon = false; 
+    this.p2haswon = false; 
   }
 
-  public getPlayer1turn(): Boolean { 
+  public startGame(): void { 
+    this.startRotationCountdown(); 
+    this.startTurn(this.player1turn); 
+  }
+
+  //Tested and works for skip turn.
+  private switchTurn(playerTurn: boolean): void { 
+    this.player1turn = !playerTurn; 
+    this.startTurn(this.player1turn); 
+  }
+
+  private rotateBoard(): void { 
+    // Rotate board should stall the timer (player turn time should not be counting down)
+    // used to rotate board and calculate player points .
+    console.log("Board is rotating!!!!!!"); 
+  }
+
+  public startRotationCountdown(): void { 
+    this.rotateIntervalId = setInterval(() => { 
+      this.rotateBoard();
+    }, ROTATE_BOARD);
+  }
+
+  public getPlayer1turn(): boolean { 
     return this.player1turn;  
-    
   }
 
-  public switchTurn(p1Turn: Boolean): void { 
-    this.player1turn = !p1Turn;
+  public skipTurn(playerTurn: boolean): void { 
+    console.log("Player's turn has been skipped"); 
+    this.switchTurn(playerTurn); 
   }
 
-  public checkWin(checkScore: Number): Boolean {
-    if (checkScore = WINNING_SCORE) { 
-      return true
+  public startTurn(playerTurn: boolean): void{ 
+      console.log("Countdown for player's turn begins now");
+      this.moveTimeoutId = setTimeout(() => {
+        this.skipTurn(playerTurn);
+      }, TURN_TIME);
+  }
+
+  public processPlayerMove(playerTurn: boolean): void { 
+      if (this.moveTimeoutId != null) { 
+        clearTimeout(this.moveTimeoutId); 
+        // cancel timeout limit
+      }
+      // Need reference to board to update board and player score after moves
+      this.switchTurn(playerTurn); // this function should start the next player's turn....
+
+
+      // At the end of move. 
+      this.switchTurn(playerTurn); 
+
+  }
+
+  /**
+   * Should return true when someone has won the game
+   *  */ 
+  public checkWin(): boolean {
+    if (this.player1.getPlayerScore() >= 21) { 
+      this.p1haswon = true; 
+    }
+    else if (this.player2.getPlayerScore() >= 21) { 
+      this.p2haswon = true; 
+    } 
+    if (this.p1haswon || this.p2haswon) { 
+        return true; 
     }
     return false; 
   }
 
-  public checkWinner(playerTurn: Boolean, playerScore: Number) { 
-    if (this.getPlayer1turn() == true && this.checkWin(this.p1Score)) { 
-      //return Player 1 entity for win 
+  /**
+   * Should only be called after checkWin() return true. 
+   * This is used to determine which player has won. 
+   * @returns 
+   */
+  public checkPlayerWin(): Player { 
+    if (this.p1haswon && this.p2haswon) { 
+      console.log("Draw has occured"); 
+      //what should we do in this scenario.....
+      // Need to discuss with Team
     }
+    else if (this.p1haswon) { 
+      console.log("Player 1 has won");
+      return this.player1; 
+    }
+    console.log("Player 2 has won")
+    return this.player2; 
   }
-
 }
