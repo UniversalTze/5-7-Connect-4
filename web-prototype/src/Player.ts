@@ -1,12 +1,24 @@
 export class Player {
     
-    private playerScore: Number; 
-    private playerName: String; 
-    constructor(score: Number, name: String) { 
+    private playerScore: number; 
+    private playerName: string; 
+    
+    constructor(score: number, name: string) { 
         this.playerScore = score; 
         this.playerName = name; 
     }
 
+    public getPlayerScore(): number { 
+        return this.playerScore; 
+    }
+
+    public getPlayerName(): string { 
+        return this.playerName; 
+    }
+
+    public addPlayerScore(score: number): void {
+        this.playerScore = this.playerScore + score;
+    }
     
 
 }
