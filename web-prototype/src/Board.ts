@@ -350,6 +350,7 @@ export class Board {
       new Array(this.col).fill(constants.EMPTY));
     let points = [0, 0];
     let clearedBoard: number[][] = this.board.map(row=>[...row]);
+    let currentBoard: number[][] = this.board.map(row=>[...row]);
 
     if (type === constants.FULL_CLEAR) {
       this.checkForCombos(points, combos, constants.FULL_CLEAR);
@@ -367,9 +368,9 @@ export class Board {
         }
       }
     }
-
-    this.bd.animateComboClear(this.board, clearedBoard); 
+    
     this.board = clearedBoard;
+    this.bd.animateComboClear(currentBoard, clearedBoard); 
 
     totalPoints[0] = points[0]; // Player 1 points from combos
     totalPoints[1] = points[1]; // Player 2 points from combos
