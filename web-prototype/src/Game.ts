@@ -39,9 +39,9 @@ export class Game {
   }
 
   //Tested and works for skip turn.
-  private switchTurn(playerTurn: boolean): void { 
-    this.player1turn = !playerTurn; 
-    this.startTurn(this.player1turn); 
+  public switchTurn(): void { 
+    this.player1turn = !this.player1turn; 
+    // this.startTurn(this.player1turn); 
   }
 
   private rotateBoard(): void { 
@@ -62,7 +62,7 @@ export class Game {
 
   public skipTurn(playerTurn: boolean): void { 
     console.log("Player's turn has been skipped"); 
-    this.switchTurn(playerTurn); 
+    this.switchTurn(); 
   }
 
   public startTurn(playerTurn: boolean): void{ 
@@ -78,11 +78,11 @@ export class Game {
         // cancel timeout limit
       }
       // Need reference to board to update board and player score after moves
-      this.switchTurn(playerTurn); // this function should start the next player's turn....
+      this.switchTurn(); // this function should start the next player's turn....
 
 
       // At the end of move. 
-      this.switchTurn(playerTurn); 
+      this.switchTurn(); 
 
   }
 

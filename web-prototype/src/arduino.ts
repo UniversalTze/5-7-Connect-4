@@ -37,6 +37,7 @@ export class Arduino {
   setup() {
     // initialise current state
     this.state = constants.WAIT_FOR_TOKEN_STATE;
+    this.previousTime = Date.now();
   }
 
   loop() {
@@ -45,6 +46,13 @@ export class Arduino {
 
     switch (this.state) {
       case constants.WAIT_FOR_TOKEN_STATE:
+        if (currentTime - this.previousTime >= constants.PLAYER_TURN_INTERVAL) {
+          console.log(`player ${this.game.getCurrentPlayer()} ran out of time`)
+          this.previousTime = currentTime;
+          this.game.switchTurn();
+          break;
+        } 
+
         if (this.columnInput == constants.NO_INPUT) break;
 
         console.log(`token detected at ${this.columnInput}`)
@@ -53,11 +61,14 @@ export class Arduino {
           console.log(`valid column`)
           this.display.animateBoard(this.board.getBoard())
           this.previousTime = currentTime;
-          this.state = constants.TOKEN_FALLING_STATE
+          this.state = constants.TOKEN_FALLING_STATE;
+          this.game.switchTurn();
         } else {
           console.log(`invalid column`)
           // handle error behaviour
         }
+        
+        this.columnInput = constants.NO_INPUT;
 
         break;
       case constants.TOKEN_FALLING_STATE:
@@ -78,7 +89,7 @@ export class Arduino {
         break;
     }
 
-    if (this.columnInput != constants.NO_INPUT && this.state != constants.WAIT_FOR_TOKEN_STATE) {
+    if (this.columnInput != constants.NO_INPUT) {
       console.log(`ERROR: token detected outside wait for token state`)
       // handle error behaviour here e.g. play sound
     }

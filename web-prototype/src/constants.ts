@@ -22,4 +22,5 @@ export const WAIT_FOR_TOKEN_STATE = 0;
 export const TOKEN_FALLING_STATE = 1;
 export const ANIMATE_LINE_CLEAR_STATE = 2;
     
+export const PLAYER_TURN_INTERVAL = 10000;
 export const TOKEN_FALLING_INTERVAL = 100;
