@@ -58,6 +58,7 @@ export class Arduino {
         if (timeTilRotation <= 0) {
           console.log(`uh oh! board is rotatin!`)
           this.board.rotateBoard(90);
+          this.display.animateBoard(this.board.getBoard());
           this.changeState(constants.TOKEN_FALLING_STATE, currentTime);
           this.previousRotationTime = currentTime;
         }
