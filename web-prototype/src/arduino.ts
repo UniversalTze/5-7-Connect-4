@@ -12,6 +12,7 @@ export class Arduino {
 
   // These variables are just for the DEMO
   previousTime: number = 0;
+  previousRotationTime: number = 0;
   interval: number = 1000;
   ledState: number = 0;
   numberState: number = 0;
@@ -24,7 +25,7 @@ export class Arduino {
   display: BoardDisplay = new BoardDisplay();
 
   state: number = -1;
-  
+  previousValidColumnInput: number = -1;
 
   constructor(
     setPixelColor: (row: number, col: number, colour: string) => void,
@@ -36,22 +37,38 @@ export class Arduino {
 
   setup() {
     // initialise current state
-    this.state = constants.WAIT_FOR_TOKEN_STATE;
-    this.previousTime = Date.now();
+    this.changeState(constants.WAIT_FOR_TOKEN_STATE, Date.now())
+    this.previousRotationTime = Date.now()
   }
 
   loop() {
     // Code Demo for blinking light, NO using delays
     let currentTime = Date.now();
 
+    let timeTilRotation = Math.max(0, constants.BOARD_ROTATION_INTERVAL - (currentTime - this.previousRotationTime))
+    
+    this.setDisplayNumber(constants.BOARD_ROTATION_DISPLAY, timeTilRotation / 1000)
+
     switch (this.state) {
       case constants.WAIT_FOR_TOKEN_STATE:
-        if (currentTime - this.previousTime >= constants.PLAYER_TURN_INTERVAL) {
+        let remainingTurnTime = (constants.PLAYER_TURN_INTERVAL - (currentTime - this.previousTime)) 
+        this.setDisplayNumber(constants.PLAYER_TURN_DISPLAY, remainingTurnTime / 1000)
+
+        // handle board rotating 
+        if (timeTilRotation <= 0) {
+          console.log(`uh oh! board is rotatin!`)
+          this.board.rotateBoard(90);
+          this.changeState(constants.TOKEN_FALLING_STATE, currentTime);
+          this.previousRotationTime = currentTime;
+        }
+
+        // handle player running out of time
+        if (remainingTurnTime <= 0) {
           console.log(`player ${this.game.getCurrentPlayer()} ran out of time`)
           this.previousTime = currentTime;
           this.game.switchTurn();
           break;
-        } 
+        }
 
         if (this.columnInput == constants.NO_INPUT) break;
 
@@ -59,9 +76,9 @@ export class Arduino {
         
         if (this.board.placeToken(this.columnInput, this.game.getCurrentPlayer())) {
           console.log(`valid column`)
-          this.display.animateBoard(this.board.getBoard())
-          this.previousTime = currentTime;
-          this.state = constants.TOKEN_FALLING_STATE;
+          this.previousValidColumnInput = this.columnInput;
+          this.display.animateBoard(this.board.getBoard());
+          this.changeState(constants.TOKEN_FALLING_STATE, currentTime);
           this.game.switchTurn();
         } else {
           console.log(`invalid column`)
@@ -80,12 +97,33 @@ export class Arduino {
             this.display.animateBoard(this.board.getBoard())
           } else {
             // done falling, now check for line clears
-            this.state = constants.WAIT_FOR_TOKEN_STATE;
+            let points: number[] = [0, 0];
+            let linesCleared = this.board.clearCombos(points, this.previousValidColumnInput);
+
+
+            if (linesCleared) {
+              // switch
+              console.log('linefound')
+              this.changeState(constants.ANIMATE_LINE_CLEAR_STATE, currentTime)
+            } else {
+              if (this.previousValidColumnInput != constants.NO_INPUT) {
+                // this.board.rotateBoard(90);
+                // reset previous valid column input
+                this.previousValidColumnInput = constants.NO_INPUT;
+              } else {
+                console.log('hello')
+                this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
+              }
+              
+            }
           }
         }
         break;
       case constants.ANIMATE_LINE_CLEAR_STATE:
-        
+        if (currentTime - this.previousTime >= 1000) {
+          console.log('pretend animation done, go back to tokens falling')
+          this.changeState(constants.TOKEN_FALLING_STATE, currentTime)
+        }
         break;
     }
 
@@ -95,4 +133,9 @@ export class Arduino {
     }
     this.columnInput = constants.NO_INPUT;
   } 
+
+  changeState(state: number, currentTime: number): void {
+    this.state = state;
+    this.previousTime = currentTime;
+  }
 }

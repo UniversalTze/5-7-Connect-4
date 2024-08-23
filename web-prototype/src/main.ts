@@ -32,7 +32,11 @@ function setDisplayNumber(display: number, number: number) {
     `#display-${display}`
   ) as HTMLElement;
   if (display != null) {
-    displayElement.innerHTML = number.toString();
+    if (display == 1 || display == 2) {
+      displayElement.innerHTML = number.toFixed(1);
+    } else {
+      displayElement.innerHTML = number.toString();
+    }
   }
 }
 

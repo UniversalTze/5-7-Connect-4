@@ -382,9 +382,10 @@ export class Board {
         return false;
       }
     } else {
-      if (lastCol < 0 || lastCol >= this.col) {
-        return;
-      }                   
+      // TODO: LIAM: this returns null which messes up the typing, i think is some sort of bound check error handling?
+      // if (lastCol < 0 || lastCol >= this.col) {
+      //   return;
+      // }                   
       if (!this.checkForCombos(points, combos, lastCol = lastCol)) {
         return false;
       }
