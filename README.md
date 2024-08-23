@@ -3,7 +3,11 @@ README FILE
 
 DECO3801 Connect 4 Project Repo 
 
-Authors: (Will be modified) 
+Authors: 
+UniversalTze 
+pchsa
+ThePyroMancer1
+haozhi-ryan
 
 
 
