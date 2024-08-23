@@ -1,5 +1,4 @@
 import * as constants from "./constants.ts";
-import * as BD from "./BoardDisplay.ts";
 
 // Handles Board Functionality
 export class Board {
@@ -7,7 +6,7 @@ export class Board {
   row: number;
   col: number;
   board: number[][];  // top left is (0, 0)
-  bd: BD.BoardDisplay;
+  prevBoard: number[][];
   
   constructor() {
     this.row = constants.BOARD_WIDTH;
@@ -16,9 +15,10 @@ export class Board {
         .fill(constants.EMPTY)
         .map(() => new Array(constants.BOARD_HEIGHT)
             .fill(constants.EMPTY));
-
-    // Initialize the board display
-    this.bd = new BD.BoardDisplay();
+    this.prevBoard = new Array(constants.BOARD_WIDTH)
+        .fill(constants.EMPTY)
+        .map(() => new Array(constants.BOARD_HEIGHT)
+            .fill(constants.EMPTY));
   }
 
   /*
@@ -26,6 +26,13 @@ export class Board {
   */
   getBoard() {
     return this.board;
+  }
+
+  /*
+    Returns the 2D array representing the previous board state
+  */
+  getPrevBoard() {
+    return this.prevBoard;
   }
 
   /*
@@ -70,37 +77,34 @@ export class Board {
 
   /*
     Checks if a token is above an empty slot and needs to fall. 
-    tokensToDrop: 2D array to store the tokens that need to fall. All other
-    positions are set to EMPTY
   */ 
-  checkTokenFall(tokensToDrop: number[][]) {
+  checkTokenFall(row: number, col: number) {
     // Check if there is a token above an empty slot
-    for (let i = 0; i < this.row; i++) {
-      for (let j = 0; j < this.col; j++) {
-        if (this.board[i][j] !== constants.EMPTY && this.board[i + 1][j]
-          === constants.EMPTY) {
-          tokensToDrop[i][j] = this.board[i][j];
-        }
-      }
-    }
+    return (this.board[row][col] !== constants.EMPTY && this.board[row + 1][col]
+      === constants.EMPTY)
   }
 
   /*
     Makes the tokens fall down if there is an empty slot below
   */
   tokenFall() {
-    let tokensToDrop = new Array(this.row).fill(constants.EMPTY).map(() =>
-      new Array(this.col).fill(constants.EMPTY));
-    this.checkTokenFall(tokensToDrop);
+    let updatedBoard: number[][] = this.board.map(row=>[...row]);
+    let tokenFell = false;
 
-    for (let i = 0; i < this.row; i++) {
+    for (let i = 0; i < this.row - 1; i++) {
       for (let j = 0; j < this.col; j++) {
-        if (tokensToDrop[i][j] !== constants.EMPTY) {
-          this.board[i + 1][j] = tokensToDrop[i][j];
-          this.board[i][j] = constants.EMPTY;
+        if (this.checkTokenFall(i, j)) {
+          updatedBoard[i][j] = constants.EMPTY;
+          updatedBoard[i + 1][j] = this.board[i][j];
+          tokenFell = true;
         }
       }
     }
+    
+    this.prevBoard = this.board;
+    this.board = updatedBoard;
+
+    return tokenFell;
   }
 
   /*
@@ -137,12 +141,8 @@ export class Board {
         break;
     }
 
-    // Copy the new board to the current board
-    for (let i = 0; i < this.row; i++) {
-      for (let j = 0; j < this.col; j++) {
-        this.board[i][j] = newBoard[i][j];
-      }
-    }
+    this.prevBoard = this.board;
+    this.board = newBoard;
   }
   
   /*
@@ -169,6 +169,7 @@ export class Board {
     combos: 2D array to store the combos
   */
   checkHorizontal(points: number[], combos: number[][]) {
+    let comboExists = false;
     for (let i = 0; i < this.row; i++) {
       let count = 1;
       for (let j = 0; j < this.col; j++) {
@@ -179,11 +180,14 @@ export class Board {
           if (count >= constants.MIN_COMBO_LENGTH) {
             this.copyCombo(i, j - count + 1, i, j, combos);
             points[this.board[i][j] - 1] += count; // Add points for the player
+            comboExists = true;
           }
           count = 1;
         }
       }
     }
+
+    return comboExists;
   }
 
   /*
@@ -192,6 +196,8 @@ export class Board {
     combos: 2D array to store the combos
   */
   checkVertical(points: number[], combos: number[][]) {
+    let comboExists = false;
+
     for (let j = 0; j < this.col; j++) {
       let count = 1;
       for (let i = 0; i < this.row; i++) {
@@ -202,11 +208,14 @@ export class Board {
           if (count >= constants.MIN_COMBO_LENGTH) {
             this.copyCombo(i - count + 1, j, i, j, combos);
             points[this.board[i][j] - 1] += count; // Add points for the player
+            comboExists = true;
           }
           count = 1;
         }
       }
     }
+
+    return comboExists;
   }
 
   /*
@@ -215,6 +224,8 @@ export class Board {
     combos: 2D array to store the combos
   */
   checkDiagonal(points: number[], combos: number[][]) {
+    let comboExists = false;
+
     for (let i = 0; i < this.row; i++) {
       for (let j = 0; j < this.col; j++) {
         let count = 1;
@@ -231,6 +242,7 @@ export class Board {
         if (count >= constants.MIN_COMBO_LENGTH) {
           this.copyCombo(i, j, i + count - 1, j + count - 1, combos);
           points[this.board[i][j] - 1] += count; // Add points for the player
+          comboExists = true;
         }
       }
     }
@@ -251,9 +263,12 @@ export class Board {
         if (count >= constants.MIN_COMBO_LENGTH) {
           this.copyCombo(i, j, i + count - 1, j - count + 1, combos);
           points[this.board[i][j] - 1] += count; // Add points for the player
+          comboExists = true;
         }
       }
     }
+
+    return comboExists;
   }
 
   /*
@@ -274,6 +289,7 @@ export class Board {
     let startCol = col;
     let endRow = row;
     let endCol = col;
+    let comboExists = false;
 
     // Check combo in negative direction
     for (let i = 1; i < constants.MAX_COMBO_LENGTH; i++) {
@@ -306,7 +322,10 @@ export class Board {
     if (count >= constants.MIN_COMBO_LENGTH) {
       this.copyCombo(startRow, startCol, endRow, endCol, combos);
       points[this.board[row][col] - 1] += count; // Add points for the player
+      comboExists = true;
     }
+
+    return comboExists;
   }
 
   /*
@@ -319,21 +338,28 @@ export class Board {
   */
   checkForCombos(points: number[], combos: number[][], type: number = -1, 
     lastCol: number = -1) {
+    let comboExists = false;
 
     if (type === constants.FULL_CLEAR) {
-      this.checkHorizontal(points, combos);
-      this.checkVertical(points, combos);
-      this.checkDiagonal(points, combos);
+      comboExists = comboExists || this.checkHorizontal(points, combos);
+      comboExists = comboExists || this.checkVertical(points, combos);
+      comboExists = comboExists || this.checkDiagonal(points, combos);
     } else { // Check for combos around the last placed token
       let lastTokenRow: number = this.getTopTokenRow(lastCol);
       if (lastTokenRow === -1) {
         return;
       }
 
-      this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, 0); 
-      this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 0, 1);
-      this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, 1); 
-      this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, -1);
+      comboExists = comboExists || 
+        this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, 0);
+      comboExists = comboExists || 
+        this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 0, 1);
+      comboExists = comboExists || 
+        this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, 1); 
+      comboExists = comboExists || 
+        this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, -1);
+
+      return comboExists;
     }
   }
 
@@ -350,15 +376,18 @@ export class Board {
       new Array(this.col).fill(constants.EMPTY));
     let points = [0, 0];
     let clearedBoard: number[][] = this.board.map(row=>[...row]);
-    let currentBoard: number[][] = this.board.map(row=>[...row]);
 
     if (type === constants.FULL_CLEAR) {
-      this.checkForCombos(points, combos, constants.FULL_CLEAR);
+      if (!this.checkForCombos(points, combos, constants.FULL_CLEAR)) {
+        return false;
+      }
     } else {
       if (lastCol < 0 || lastCol >= this.col) {
         return;
-      }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-      this.checkForCombos(points, combos, lastCol = lastCol);
+      }                   
+      if (!this.checkForCombos(points, combos, lastCol = lastCol)) {
+        return false;
+      }
     }
  
     for (let i = 0; i < this.row; i++) {
@@ -369,10 +398,12 @@ export class Board {
       }
     }
     
+    this.prevBoard = this.board;
     this.board = clearedBoard;
-    this.bd.animateComboClear(currentBoard, clearedBoard); 
 
     totalPoints[0] = points[0]; // Player 1 points from combos
     totalPoints[1] = points[1]; // Player 2 points from combos
+
+    return true;
   }
 }
