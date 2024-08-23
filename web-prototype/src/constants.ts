@@ -9,6 +9,8 @@ export const PLAYER_2 = 2;
 
 export const PLAYER_COLOR = ["#cf4242", "#ddaf24"];
 
+export const FLASH_COLOR = ["white"]
+
 export const FULL_CLEAR = 1;
 
 export const MAX_COMBO_LENGTH = 6;
