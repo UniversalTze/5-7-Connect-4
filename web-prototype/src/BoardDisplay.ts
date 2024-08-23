@@ -1,7 +1,7 @@
 import * as constants from "./constants.ts";
-import { Arduino } from "./arduino";
 
 export class BoardDisplay {
+  
   animateBoard(currentBoard: number[][]) { 
     // Updates the board
     for (let row = 0; row < currentBoard.length; row++) {
@@ -86,6 +86,42 @@ export class BoardDisplay {
         this.setPixelColor(row, col, backGroundColor); // Restore the original color
       }, flashDuration * 3);
     }
+  }
+
+  private flashPixel2(row: number, col: number, originalColor: string) {
+    const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`) as HTMLElement;
+    if (cellElement) {
+      const backGroundColor = cellElement.style.backgroundColor;
+      const flashDuration = 500; // Duration of each flash in ms
+      this.setPixelColor(row, col, constants.FLASH_COLOR[0]); // Start with white
+      setTimeout(() => {
+        this.setPixelColor(row, col, originalColor); // Flash back to the original color
+      }, flashDuration);
+
+      setTimeout(() => {
+        this.setPixelColor(row, col, constants.FLASH_COLOR[0]); // Flash to white again
+      }, flashDuration * 2);
+
+      setTimeout(() => {
+        this.setPixelColor(row, col, backGroundColor); // Restore the original color
+      }, flashDuration * 3);
+    }
+  }
+
+  private something(currentTime: number) {
+    if (currentTime == 500) {
+      
+    }
+    if (currentTime == 1000) {
+      
+    }
+    if (currentTime == 1500) {
+      
+      return true
+    }
+    
+    
+    return false
   }
 }
 

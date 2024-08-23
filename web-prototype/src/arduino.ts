@@ -1,5 +1,6 @@
 // THIS FILE IS MEANT TO EMULATE ARDUINO CODE
 
+import { BoardDisplay } from "./BoardDisplay.ts";
 import * as constants from "./constants.ts";
 import { Game } from "./Game.ts";
 
@@ -15,6 +16,10 @@ export class Arduino {
   ledState: number = 0;
   numberState: number = 0;
   game: Game = new Game();
+  interval1 = 500
+  interval2 = 1000
+  interval3 = 1500
+  display = new BoardDisplay();
 
   constructor(
     setPixelColor: (row: number, col: number, colour: string) => void,
@@ -43,5 +48,10 @@ export class Arduino {
       console.log(`token detected at ${this.columnInput}`);
       this.columnInput = constants.NO_INPUT;
     }
+
+    // if (true) { //animation state
+    //   something = this.display.something(currentTime)
+
+    // }
   }
 }
