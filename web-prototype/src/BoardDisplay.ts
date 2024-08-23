@@ -6,12 +6,15 @@ export class BoardDisplay {
     // Updates the board
     for (let row = 0; row < currentBoard.length; row++) {
       for (let col = 0; col < currentBoard[row].length; col++) {
+        if (currentBoard[row][col] == 0) {
+          this.setPixelColor(row, col, constants.EMPTY_COLOR)
+        }
         if (currentBoard[row][col] == 1) {
           // Player 1 color 
-          this.setPixelColor(row, col, constants.PLAYER_COLOR[0])
+          this.setPixelColor(row, col, constants.PLAYER_1_COLOR)
         } else if (currentBoard[row][col] == 2) {
           // Player 2 color
-          this.setPixelColor(row, col, constants.PLAYER_COLOR[1])
+          this.setPixelColor(row, col, constants.PLAYER_2_COLOR)
         }
       }
     }
@@ -26,20 +29,20 @@ export class BoardDisplay {
           // Set's the pixel color
           if (currentBoard[row][col] == 1) {
             // Player 1 color 
-            this.setPixelColor(row, col, constants.PLAYER_COLOR[0])
+            this.setPixelColor(row, col, constants.PLAYER_1_COLOR)
           } else if (currentBoard[row][col] == 2) {
             // Player 2 color
-            this.setPixelColor(row, col, constants.PLAYER_COLOR[1])
+            this.setPixelColor(row, col, constants.PLAYER_2_COLOR)
           }   
         } else {
           // If it's different
           // TODO: flash the pixel colour
           if (currentBoard[row][col] == 1) {
             // Player 1 color 
-            this.flashPixel(row, col, constants.PLAYER_COLOR[0])
+            this.flashPixel(row, col, constants.PLAYER_1_COLOR)
           } else if (currentBoard[row][col] == 2) {
             // Player 2 color
-            this.flashPixel(row, col, constants.PLAYER_COLOR[1])
+            this.flashPixel(row, col, constants.PLAYER_2_COLOR)
           }
         }
       }

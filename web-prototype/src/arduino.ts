@@ -1,11 +1,11 @@
 // THIS FILE IS MEANT TO EMULATE ARDUINO CODE
 
+import { Board } from "./Board.ts";
 import { BoardDisplay } from "./BoardDisplay.ts";
 import * as constants from "./constants.ts";
 import { Game } from "./Game.ts";
 
 export class Arduino {
-  // TODO: input should probably be handled elsewhere, like inputhandler
   columnInput: number = constants.NO_INPUT;
   setPixelColor: (row: number, col: number, colour: string) => void;
   setDisplayNumber: (display: number, number: number) => void;
@@ -15,11 +15,16 @@ export class Arduino {
   interval: number = 1000;
   ledState: number = 0;
   numberState: number = 0;
-  game: Game = new Game();
   interval1 = 500
   interval2 = 1000
   interval3 = 1500
-  display = new BoardDisplay();
+  
+  game: Game = new Game();
+  board: Board = new Board();
+  display: BoardDisplay = new BoardDisplay();
+
+  state: number = -1;
+  
 
   constructor(
     setPixelColor: (row: number, col: number, colour: string) => void,
@@ -30,28 +35,53 @@ export class Arduino {
   }
 
   setup() {
-    // probably not needed for prototype
-    // this.setDisplayNumber(0, 5);
+    // initialise current state
+    this.state = constants.WAIT_FOR_TOKEN_STATE;
   }
 
   loop() {
     // Code Demo for blinking light, NO using delays
     let currentTime = Date.now();
-    if (currentTime - this.previousTime >= this.interval) {
-      this.previousTime = currentTime;
-      this.ledState = 1 - this.ledState;
-      this.setPixelColor(0, 0, constants.PLAYER_COLOR[this.ledState]);
-      this.setDisplayNumber(constants.PLAYER_1, this.numberState++);
+
+    switch (this.state) {
+      case constants.WAIT_FOR_TOKEN_STATE:
+        if (this.columnInput == constants.NO_INPUT) break;
+
+        console.log(`token detected at ${this.columnInput}`)
+        
+        if (this.board.placeToken(this.columnInput, this.game.getCurrentPlayer())) {
+          console.log(`valid column`)
+          this.display.animateBoard(this.board.getBoard())
+          this.previousTime = currentTime;
+          this.state = constants.TOKEN_FALLING_STATE
+        } else {
+          console.log(`invalid column`)
+          // handle error behaviour
+        }
+
+        break;
+      case constants.TOKEN_FALLING_STATE:
+        if (currentTime - this.previousTime >= constants.TOKEN_FALLING_INTERVAL) {
+          let tokenFell: boolean = this.board.tokenFall()
+          this.previousTime = currentTime;
+
+          if (tokenFell) {
+            this.display.animateBoard(this.board.getBoard())
+          } else {
+            // done falling, now check for line clears
+            this.state = constants.WAIT_FOR_TOKEN_STATE;
+          }
+        }
+        break;
+      case constants.ANIMATE_LINE_CLEAR_STATE:
+        
+        break;
     }
 
-    if (this.columnInput != constants.NO_INPUT) {
-      console.log(`token detected at ${this.columnInput}`);
-      this.columnInput = constants.NO_INPUT;
+    if (this.columnInput != constants.NO_INPUT && this.state != constants.WAIT_FOR_TOKEN_STATE) {
+      console.log(`ERROR: token detected outside wait for token state`)
+      // handle error behaviour here e.g. play sound
     }
-
-    // if (true) { //animation state
-    //   something = this.display.something(currentTime)
-
-    // }
-  }
+    this.columnInput = constants.NO_INPUT;
+  } 
 }

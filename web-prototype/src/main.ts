@@ -2,7 +2,6 @@ import "./style.css";
 
 import { Arduino } from "./arduino.ts";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./constants.ts";
-import { BoardDisplay } from './BoardDisplay';
 
 const board: HTMLElement = document.getElementById("board")!;
 const rows = BOARD_HEIGHT;
@@ -60,32 +59,3 @@ function loop() {
 }
 
 requestAnimationFrame(loop);
-
-// Used for testing BoardDisplay class
-let currentBoard: number[][] = [
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0], // Initial combo setup
-  [0, 0, 1, 1, 0, 0, 0],
-  [0, 0, 2, 2, 2, 0, 0],
-];
-
-let clearedBoard: number[][] = [
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0], // After clearing the combo
-  [0, 0, 1, 1, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-];
-
-const boardDisplay = new BoardDisplay();
-
-// Tests the board is displaying the pieces correctly
-// boardDisplay.animateBoard(currentBoard);
-
-// Tests flashing pieces 
-boardDisplay.animateComboClear(currentBoard, clearedBoard);
-
-boardDisplay.updateScoreDisplay(1, 2)

@@ -120,4 +120,8 @@ export class Game {
     console.log("Player 2 has won")
     return this.player2; 
   }
+
+  public getCurrentPlayer(): number {
+    return this.player1turn ? 1 : 2
+  }
 }
