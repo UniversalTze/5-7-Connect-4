@@ -155,10 +155,34 @@ export class Board {
   */
   copyCombo(startRow: number, startCol: number, endRow: number, 
     endCol: number, combos: number[][]) {
-    for (let i = startRow; i <= endRow; i++) {
-      for (let j = startCol; j <= endCol; j++) {
-        combos[i][j] = this.board[i][j];
+    
+    if (startRow === endRow) {
+      for (let i = startCol; i <= endCol; i++) {
+        combos[startRow][i] = this.board[startRow][i];
       }
+    } else if (startCol === endCol) {
+      for (let i = startRow; i <= endRow; i++) {
+        combos[i][startCol] = this.board[i][startCol];
+      }
+    } else {
+      // Diagonal combo
+      let xd = -1;
+      let yd = -1;
+      if (startRow < endRow) {
+        xd = 1;
+      }
+      if (startCol < endCol) {
+        yd = 1;
+      }
+
+      let i = startRow;
+      let j = startCol;
+      while (i != endRow && j != endCol) {
+        combos[i][j] = this.board[i][j];
+        i += xd;
+        j += yd;
+      }
+      combos[endRow][endCol] = this.board[endRow][endCol];
     }
   }
 
