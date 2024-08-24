@@ -99,8 +99,7 @@ export class Arduino {
           } else {
             // done falling, now check for line clears
             let points: number[] = [0, 0];
-            let linesCleared = this.board.clearCombos(points, this.previousValidColumnInput);
-
+            let linesCleared = this.board.clearCombos(points, this.previousValidColumnInput, constants.FULL_CLEAR);
 
             if (linesCleared) {
               // switch

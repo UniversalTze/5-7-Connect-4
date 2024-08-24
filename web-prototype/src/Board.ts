@@ -347,7 +347,8 @@ export class Board {
     } else { // Check for combos around the last placed token
       let lastTokenRow: number = this.getTopTokenRow(lastCol);
       if (lastTokenRow === -1) {
-        return;
+        console.log("Token pos is not valid");
+        return false;
       }
 
       comboExists = comboExists || 
@@ -358,9 +359,9 @@ export class Board {
         this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, 1); 
       comboExists = comboExists || 
         this.checkComboFromToken(points, combos, lastCol, lastTokenRow, 1, -1);
-
-      return comboExists;
     }
+
+    return comboExists;
   }
 
   /*
@@ -382,10 +383,10 @@ export class Board {
         return false;
       }
     } else {
-      // TODO: LIAM: this returns null which messes up the typing, i think is some sort of bound check error handling?
-      // if (lastCol < 0 || lastCol >= this.col) {
-      //   return;
-      // }                   
+      if (lastCol < 0 || lastCol >= this.col) {
+        console.log("Invalid column");
+          return false;
+      }                   
       if (!this.checkForCombos(points, combos, lastCol = lastCol)) {
         return false;
       }
@@ -394,7 +395,7 @@ export class Board {
     for (let i = 0; i < this.row; i++) {
       for (let j = 0; j < this.col; j++) {
         if (combos[i][j] !== constants.EMPTY) {
-          clearedBoard[i][j]= constants.EMPTY;
+          clearedBoard[i][j] = constants.EMPTY;
         }
       }
     }
@@ -404,7 +405,6 @@ export class Board {
 
     totalPoints[0] = points[0]; // Player 1 points from combos
     totalPoints[1] = points[1]; // Player 2 points from combos
-
     return true;
   }
 }
