@@ -100,27 +100,21 @@ export class Arduino {
             // done falling, now check for line clears
             let points: number[] = [0, 0];
             let linesCleared = this.board.clearCombos(points, this.previousValidColumnInput, constants.FULL_CLEAR);
-
+            this.previousValidColumnInput = constants.NO_INPUT;
             if (linesCleared) {
               // switch
               console.log('linefound')
               this.changeState(constants.ANIMATE_LINE_CLEAR_STATE, currentTime)
+              this.display.placeholder(this.board.getPrevBoard(), this.board.getBoard())
             } else {
-              if (this.previousValidColumnInput != constants.NO_INPUT) {
-                // this.board.rotateBoard(90);
-                // reset previous valid column input
-                this.previousValidColumnInput = constants.NO_INPUT;
-              } else {
-                console.log('hello')
-                this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
-              }
-              
+              this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
             }
           }
         }
         break;
       case constants.ANIMATE_LINE_CLEAR_STATE:
         if (currentTime - this.previousTime >= 1000) {
+          this.display.animateBoard(this.board.getBoard())
           console.log('pretend animation done, go back to tokens falling')
           this.changeState(constants.TOKEN_FALLING_STATE, currentTime)
         }

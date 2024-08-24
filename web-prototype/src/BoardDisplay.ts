@@ -126,6 +126,16 @@ export class BoardDisplay {
     
     return false
   }
+
+  public placeholder(previousBoard: number[][], clearedBoard: number[][]): void {
+    for (let i = 0; i < constants.BOARD_HEIGHT; i++) {
+      for (let j = 0; j < constants.BOARD_WIDTH; j++) {
+        if (previousBoard[i][j] != clearedBoard[i][j]) {
+          this.setPixelColor(i, j, 'white')
+        }
+      }
+    }
+  }
 }
 
 
