@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connect 4 Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <script defer type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <h1>Connect 4?</h1>
+    <div class="board" id="board">
+      <!-- Board cells will be created here dynamically -->
+    </div>
+    <div id="numberDisplay">
+      <div class="numberSplit">
+        <h2>Player 1:</h2>
+        <h2 class="number" id="display-0">0</h2>
+      </div>
+      <div class="numberSplit">
+        <div class="numberSplit">
+          <h2>Rotation In...</h2>
+          <h2 class="number" id="display-1">0</h2>
+        </div>
+        <br />
+        <div class="numberSplit">
+          <h2>Switch In...</h2>
+          <h2 class="number" id="display-2">0</h2>
+        </div>
+      </div>
+      <div class="numberSplit">
+        <h2>Player 2:</h2>
+        <h2 class="number" id="display-3">0</h2>
+      </div>
+    </div>
+  </body>
+</html>
