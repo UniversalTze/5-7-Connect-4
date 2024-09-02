@@ -102,6 +102,9 @@ export class Arduino {
             let points: number[] = [0, 0];
             let linesCleared = this.board.clearCombos(points, this.previousValidColumnInput, constants.FULL_CLEAR);
             this.previousValidColumnInput = constants.NO_INPUT;
+            this.game.getPlayerOne().addPlayerScore(points[0]);
+            this.game.getPlayerTwo().addPlayerScore(points[1]);
+            this.display.updateScoreDisplay(this.game.getPlayerOne().getPlayerScore(), this.game.getPlayerTwo().getPlayerScore())
             if (linesCleared) {
               // switch
               console.log('linefound')

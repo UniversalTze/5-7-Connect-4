@@ -124,4 +124,12 @@ export class Game {
   public getCurrentPlayer(): number {
     return this.player1turn ? 1 : 2
   }
+
+  public getPlayerOne(): Player {
+    return this.player1;
+  }
+  
+  public getPlayerTwo(): Player {
+    return this.player2;
+  }
 }
