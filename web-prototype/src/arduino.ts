@@ -17,6 +17,7 @@ export class Arduino {
   game: Game = new Game();
   board: Board = new Board();
   display: BoardDisplay = new BoardDisplay();
+  playerHasWon: boolean = false;
 
   state: number = -1;
   previousValidColumnInput: number = -1;
@@ -104,7 +105,7 @@ export class Arduino {
             this.previousValidColumnInput = constants.NO_INPUT;
             this.game.getPlayerOne().addPlayerScore(points[0]);
             this.game.getPlayerTwo().addPlayerScore(points[1]);
-            this.display.updateScoreDisplay(this.game.getPlayerOne().getPlayerScore(), this.game.getPlayerTwo().getPlayerScore())
+            this.display.updateScoreDisplay(this.game.getPlayerOne().getPlayerScore(), this.game.getPlayerTwo().getPlayerScore());
             if (linesCleared) {
               // switch
               console.log('linefound')
@@ -126,8 +127,22 @@ export class Arduino {
           this.display.animateBoard(this.board.getBoard())
           console.log('pretend animation done, go back to tokens falling')
           this.changeState(constants.TOKEN_FALLING_STATE, currentTime)
+          if (this.game.checkWin()) {
+            this.changeState(constants.WIN_STATE, currentTime);
+          }
         }
         break;
+      case constants.WIN_STATE:
+        let winningPlayer = this.game.checkPlayerWin();
+        if (!this.playerHasWon) {
+          if (winningPlayer === this.game.getPlayerOne()) {
+            alert("player 1 wins, refresh to restart");
+          } else {
+            alert("player 2 wins, refresh to restart");
+          }
+          // TODO: restart functions for seperate classes
+          this.playerHasWon = true;
+        }
     }
 
     if (this.columnInput != constants.NO_INPUT) {

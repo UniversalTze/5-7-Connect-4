@@ -21,10 +21,11 @@ export const MIN_COMBO_LENGTH = 4;
 export const WAIT_FOR_TOKEN_STATE = 0;
 export const TOKEN_FALLING_STATE = 1;
 export const ANIMATE_LINE_CLEAR_STATE = 2;
+export const WIN_STATE = 3;
     
-export const PLAYER_TURN_INTERVAL = 5000;
+export const PLAYER_TURN_INTERVAL = 10000;
 export const TOKEN_FALLING_INTERVAL = 100;
-export const BOARD_ROTATION_INTERVAL = 10000;
+export const BOARD_ROTATION_INTERVAL = 30000;
 
 export const PLAYER_TURN_DISPLAY = 2;
 export const BOARD_ROTATION_DISPLAY = 1;

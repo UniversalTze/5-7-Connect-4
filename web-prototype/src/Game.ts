@@ -90,10 +90,10 @@ export class Game {
    * Should return true when someone has won the game
    *  */ 
   public checkWin(): boolean {
-    if (this.player1.getPlayerScore() >= 21) { 
+    if (this.player1.getPlayerScore() >= WINNING_SCORE) { 
       this.p1haswon = true; 
     }
-    else if (this.player2.getPlayerScore() >= 21) { 
+    else if (this.player2.getPlayerScore() >= WINNING_SCORE) { 
       this.p2haswon = true; 
     } 
     if (this.p1haswon || this.p2haswon) { 
@@ -110,7 +110,7 @@ export class Game {
   public checkPlayerWin(): Player { 
     if (this.p1haswon && this.p2haswon) { 
       console.log("Draw has occured"); 
-      //what should we do in this scenario.....
+      // TODO: what should we do in this scenario.....
       // Need to discuss with Team
     }
     else if (this.p1haswon) { 
@@ -128,7 +128,7 @@ export class Game {
   public getPlayerOne(): Player {
     return this.player1;
   }
-  
+
   public getPlayerTwo(): Player {
     return this.player2;
   }
