@@ -31,12 +31,13 @@ h2 {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(7, 80px);
-  grid-template-rows: repeat(6, 80px);
   gap: 7px;
   background-color: #2e2e2e;
   padding: 20px;
   border-radius: 30px;
+  border-width: 10px;
+  border-color: #cf4242;
+  border-style: solid;
 }
 
 .numberSplit {

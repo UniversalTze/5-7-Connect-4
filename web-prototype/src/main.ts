@@ -49,8 +49,12 @@ function setPixelColor(row: number, col: number, colour: string) {
   }
 }
 
+function setBorderColor(color: string) {
+  board.style.borderColor = color;
+}
+
 // Initialise pretend Arduino
-const arduino = new Arduino(setPixelColor, setDisplayNumber);
+const arduino = new Arduino(setPixelColor, setDisplayNumber, setBorderColor);
 
 // Expose arduino to the global window object
 (window as any).arduino = arduino;

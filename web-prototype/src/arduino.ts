@@ -9,17 +9,11 @@ export class Arduino {
   columnInput: number = constants.NO_INPUT;
   setPixelColor: (row: number, col: number, colour: string) => void;
   setDisplayNumber: (display: number, number: number) => void;
+  setBorderColor: (color: string) => void;
 
   // These variables are just for the DEMO
   previousTime: number = 0;
   previousRotationTime: number = 0;
-  interval: number = 1000;
-  ledState: number = 0;
-  numberState: number = 0;
-  interval1 = 500
-  interval2 = 1000
-  interval3 = 1500
-  
   game: Game = new Game();
   board: Board = new Board();
   display: BoardDisplay = new BoardDisplay();
@@ -29,10 +23,12 @@ export class Arduino {
 
   constructor(
     setPixelColor: (row: number, col: number, colour: string) => void,
-    setDisplayNumber: (display: number, number: number) => void
+    setDisplayNumber: (display: number, number: number) => void,
+    setBorderColor: (color: string) => void
   ) {
     this.setPixelColor = setPixelColor;
     this.setDisplayNumber = setDisplayNumber;
+    this.setBorderColor = setBorderColor;
   }
 
   setup() {
@@ -68,6 +64,11 @@ export class Arduino {
           console.log(`player ${this.game.getCurrentPlayer()} ran out of time`)
           this.previousTime = currentTime;
           this.game.switchTurn();
+          if (this.game.getCurrentPlayer() == 1) {
+            this.setBorderColor(constants.PLAYER_1_COLOR);
+          } else {
+            this.setBorderColor(constants.PLAYER_2_COLOR)
+          }
           break;
         }
 
@@ -108,6 +109,11 @@ export class Arduino {
               this.display.placeholder(this.board.getPrevBoard(), this.board.getBoard())
             } else {
               this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
+              if (this.game.getCurrentPlayer() == 1) {
+                this.setBorderColor(constants.PLAYER_1_COLOR);
+              } else {
+                this.setBorderColor(constants.PLAYER_2_COLOR)
+              }
             }
           }
         }
