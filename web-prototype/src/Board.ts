@@ -431,4 +431,53 @@ export class Board {
     totalPoints[1] = points[1]; // Player 2 points from combos
     return true;
   }
+
+  /*
+    Checks if the board is full
+  */ 
+  isBoardFull() {
+    for (let i = 0; i < this.col; i++) {
+      if (this.board[0][i] === constants.EMPTY) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /*
+    Checks if the board is empty. NOTE: This function is to only be used in
+    clearBoard function.
+  */
+  isBoardEmpty() {
+    for (let i = 0; i < this.col; i++) {
+      if (this.board[this.row - 1][i] !== constants.EMPTY) {
+        return false;
+      }
+    }
+    return true;
+  }
+ 
+  /*
+    Clears the bottom row of the board
+  */
+  clearBottomRow() {
+    if (this.isBoardEmpty()) {
+      return false;
+    }
+
+    this.prevBoard = this.board;
+
+    for (let i = 0; i < this.col; i++) {
+      this.board[this.row - 1][i] = constants.EMPTY;
+    }
+
+    // Drop all tokens down one
+    for (let i = this.row - 2; i >= 0; i--) {
+      for (let j = 0; j < this.col; j++) {
+        this.board[i + 1][j] = this.board[i][j];
+        this.board[i][j] = constants.EMPTY;
+      }
+    }
+    return true;
+  }
 }
