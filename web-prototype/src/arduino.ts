@@ -111,6 +111,9 @@ export class Arduino {
               console.log('linefound')
               this.changeState(constants.ANIMATE_LINE_CLEAR_STATE, currentTime)
               this.display.placeholder(this.board.getPrevBoard(), this.board.getBoard())
+            } else if (this.board.isBoardFull()) {
+              console.log('full board')
+              this.changeState(constants.FULL_BOARD_STATE, currentTime)
             } else {
               this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
               if (this.game.getCurrentPlayer() == 1) {
@@ -143,6 +146,19 @@ export class Arduino {
           // TODO: restart functions for seperate classes
           this.playerHasWon = true;
         }
+        break;
+      case constants.FULL_BOARD_STATE:
+        if (this.board.isBoardEmpty()) {
+          this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
+          break;
+        }
+
+        if (currentTime - this.previousTime >= constants.TOKEN_FALLING_INTERVAL) {
+          this.board.clearBottomRow();
+          this.previousTime = currentTime;
+          this.display.animateBoard(this.board.getBoard())
+        }
+        break;
     }
 
     if (this.columnInput != constants.NO_INPUT) {
