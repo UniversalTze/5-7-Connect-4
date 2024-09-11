@@ -495,12 +495,52 @@ export class Board {
   }
 
   /** 
-   * Animate the player colour that wins snaking around.  (First animation)
+   * Animate the player colour that wins snaking around. Will start from the top left corner 
+   * and then branch it into two directions. It will dissapear in the bottorm right hand corner. 
    */
   public WinSnakeAround(winConstant: number, frameTrack: number) {
-    if ((frameTrack % 24) < constants.BOARD_HEIGHT) { 
-      this.board[frameTrack][0] = winConstant
+
+    this.DrawPlayerWin(winConstant, frameTrack); 
+    if (frameTrack < constants.BOARD_HEIGHT) { 
+      this.board[frameTrack % constants.BOARD_HEIGHT][0] = winConstant;
+      this.board[0][frameTrack % constants.BOARD_HEIGHT] = winConstant;
     }     
+    else if (frameTrack < constants.BOARD_HEIGHT * 2) {
+      this.board[frameTrack % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][frameTrack % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][frameTrack % constants.BOARD_WIDTH] = winConstant;
+      this.board[frameTrack % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = winConstant;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][frameTrack % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[frameTrack % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
   }
 
-}
+    public DrawPlayerWin(winConstant: number, frame: number) { 
+
+      for (let i = 1; i < constants.BOARD_HEIGHT - 1; i++) { 
+        this.board[i][1] =   winConstant; // straight line 
+      } 
+      // Now need to draw the curve around the P. 
+      for (let x = 2; x < 4; x++) { 
+        if (x % 2) { 
+          //odd number 
+          this.board[x - 1][x] = winConstant;
+        }
+        else { 
+          this.board[x - 1][x] = winConstant; 
+          this.board[x + 1][x] = winConstant; 
+        }
+      }
+      for (let y = 1; y < constants.BOARD_HEIGHT - 1; y++) { 
+        this.board[y][constants.BOARD_HEIGHT - 3] = winConstant; 
+        if (winConstant != constants.PLAYER_1) { 
+          this.board[y][constants.BOARD_HEIGHT - 2] = winConstant; 
+        } 
+      }
+
+    }
+
+  }
+

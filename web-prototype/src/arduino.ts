@@ -150,11 +150,16 @@ export class Arduino {
             winCons = constants.PLAYER_2;
         }
          //TODO: restart functions for seperate classes  
-        if (currentTime - this.previousTime >= 50) {
+        if (currentTime - this.previousTime >= 85) {
             this.board.WinSnakeAround(winCons, this.frameCounter); 
             this.display.animateBoard(this.board.getBoard()); 
             this.frameCounter += 1;  
             this.previousTime = currentTime;
+        }
+        
+        // infinite frame loop
+        if (this.frameCounter == 24) {
+          this.frameCounter = 0;  
         }
          
         
