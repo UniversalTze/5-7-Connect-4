@@ -1,4 +1,6 @@
 import * as constants from "./constants.ts";
+import { Game } from "./Game.ts";
+import { Player } from "./Player.ts";
 
 // Handles Board Functionality
 export class Board {
@@ -480,4 +482,25 @@ export class Board {
     }
     return true;
   }
+
+  /**
+   * Used to clear the board after a player has won. 
+   */
+
+  public clearBoard() { 
+    this.board = new Array(constants.BOARD_WIDTH)
+    .fill(constants.EMPTY)
+    .map(() => new Array(constants.BOARD_HEIGHT)
+        .fill(constants.EMPTY));
+  }
+
+  /** 
+   * Animate the player colour that wins snaking around.  (First animation)
+   */
+  public WinSnakeAround(winConstant: number, frameTrack: number) {
+    if ((frameTrack % 24) < constants.BOARD_HEIGHT) { 
+      this.board[frameTrack][0] = winConstant
+    }     
+  }
+
 }
