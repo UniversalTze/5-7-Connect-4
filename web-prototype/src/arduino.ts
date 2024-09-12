@@ -18,7 +18,6 @@ export class Arduino {
   board: Board = new Board();
   display: BoardDisplay = new BoardDisplay();
   playerHasWon: boolean = false;
-  frameCounter: number = 0;  // Used for animation frames
 
   state: number = -1;
   previousValidColumnInput: number = -1;
@@ -151,16 +150,12 @@ export class Arduino {
         }
          //TODO: restart functions for seperate classes  
         if (currentTime - this.previousTime >= 85) {
-            this.board.WinSnakeAround(winCons, this.frameCounter); 
+            this.board.WinSnakeAround(winCons); 
             this.display.animateBoard(this.board.getBoard()); 
-            this.frameCounter += 1;  
             this.previousTime = currentTime;
         }
         
         // infinite frame loop
-        if (this.frameCounter == 24) {
-          this.frameCounter = 0;  
-        }
          
         
         break;
