@@ -520,5 +520,26 @@ export class Board {
       this.frameCounter = 0;  
     }
   }
+
+  public DrawSnakeAround(winConstant: number) {
+    if (this.frameCounter < constants.BOARD_HEIGHT) { 
+      this.board[this.frameCounter % constants.BOARD_HEIGHT][0] = winConstant;
+      this.board[0][this.frameCounter % constants.BOARD_HEIGHT] = winConstant;
+    }     
+    else if (this.frameCounter < constants.BOARD_HEIGHT * 2) {
+      this.board[this.frameCounter % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][this.frameCounter % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][this.frameCounter % constants.BOARD_WIDTH] = winConstant;
+      this.board[this.frameCounter % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = winConstant;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][this.frameCounter % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[this.frameCounter % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
+    this.frameCounter += 1;
+    if (this.frameCounter == 24) {
+      this.frameCounter = 0;  
+    }
+  }
 }
 

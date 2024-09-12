@@ -2,7 +2,7 @@
 import { NO_INPUT } from "./constants";
 import { Player } from "./Player";
 
-const WINNING_SCORE = 4;  
+const WINNING_SCORE = 21;  
 const TURN_TIME = 30000; //30 secodns in milliseconds
 const ROTATE_BOARD = 120000; // 2 minutes in milliseconds 
 // Still need to set interval for this board, and need reference to board variable 
@@ -16,8 +16,8 @@ export class Game {
   private player1turn: boolean; 
   private p1haswon: boolean;
   private p2haswon: boolean; 
-  private player1: Player
-  private player2: Player
+  private player1: Player;
+  private player2: Player;
 
   constructor() {
     //leave constructor as empty for now
@@ -86,6 +86,13 @@ export class Game {
 
   }
 
+  public checkDraw(): boolean { 
+    if (this.p1haswon && this.p2haswon) { 
+      return true; 
+    }
+    return false; 
+
+  }
   /**
    * Should return true when someone has won the game
    *  */ 
