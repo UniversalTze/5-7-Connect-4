@@ -10,6 +10,18 @@ export const PLAYER_2 = 2;
 export const EMPTY_COLOR = "#504f4f";
 export const PLAYER_1_COLOR = "#cf4242";
 export const PLAYER_2_COLOR = "#ddaf24";
+export const RAINBOW = [
+    '#FF0000', // Red
+    '#00FF00', // Green
+    '#0000FF', // Blue
+    '#FFFF00', // Yellow
+    '#FF00FF', // Magenta
+    '#00FFFF', // Cyan
+    '#800000', // Maroon
+    '#808000', // Olive
+    '#008080', // Teal
+    '#800080'  // Purple
+];
 
 export const FLASH_COLOR = ["white"]
 

@@ -110,7 +110,9 @@ export class Arduino {
               // switch
               console.log('linefound')
               this.changeState(constants.ANIMATE_LINE_CLEAR_STATE, currentTime)
-              this.display.placeholder(this.board.getPrevBoard(), this.board.getBoard())
+              let color = this.display.getRandomColor(constants.RAINBOW)
+              this.setBorderColor(color)
+              this.display.animateComboClear(this.board.getPrevBoard(), this.board.getBoard())
             } else if (this.board.isBoardFull()) {
               console.log('full board')
               this.changeState(constants.FULL_BOARD_STATE, currentTime)
@@ -152,13 +154,15 @@ export class Arduino {
           this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
           break;
         }
-
+        
+        // Animate rainbow falling pieces and board border
         if (currentTime - this.previousTime >= constants.TOKEN_FALLING_INTERVAL) {
           this.board.clearBottomRow();
           this.previousTime = currentTime;
-          this.display.animateBoard(this.board.getBoard())
+          this.display.animateFullBoard(this.board.getBoard())
+          let color = this.display.getRandomColor(constants.RAINBOW)
+          this.setBorderColor(color)
         }
-        break;
     }
 
     if (this.columnInput != constants.NO_INPUT) {
