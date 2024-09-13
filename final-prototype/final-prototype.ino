@@ -12,7 +12,7 @@ int columnInput = NO_INPUT;
 
 unsigned long previousTime = 0;
 unsigned long previousRotationTime = 0;
-bool playerHasWon = false;
+int win_state = NO_WIN;
 int state = -1;
 int previousValidColumnInput = -1;
 
@@ -61,7 +61,7 @@ void loop() {
             if (board.placeToken(columnInput, game.getCurrentPlayer())) {
                 Serial.println("valid column");
                 previousValidColumnInput = columnInput;
-                display.animateBoard(board.getBoard());
+                display.animateBoard(board.board);
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 game.switchTurn();
             } else {
@@ -78,7 +78,7 @@ void loop() {
                 previousTime = currentTime;
 
                 if (tokenFell) {
-                    display.animateBoard(board.getBoard());
+                    display.animateBoard(board.board);
                 } else {
                     // Done falling, now check for line clears
                     int points[2] = {0, 0};
@@ -90,7 +90,7 @@ void loop() {
                     if (linesCleared) {
                         Serial.println("linefound");
                         changeState(ANIMATE_LINE_CLEAR_STATE, currentTime);
-                        display.placeholder(board.getPrevBoard(), board.getBoard());
+                        display.placeholder(board.prevBoard, board.board);
                     } else if (board.isBoardFull()) {
                         Serial.println("full board");
                         changeState(FULL_BOARD_STATE, currentTime);
@@ -107,23 +107,28 @@ void loop() {
             break;
         case ANIMATE_LINE_CLEAR_STATE:
             if (currentTime - previousTime >= 1000) {
-                display.animateBoard(board.getBoard());
+                display.animateBoard(board.board);
                 Serial.println("pretend animation done, go back to tokens falling");
                 changeState(TOKEN_FALLING_STATE, currentTime);
-                if (game.checkWin()) {
+                win_state = game.checkWin();
+                if (win_state) {
                     changeState(WIN_STATE, currentTime);
                 }
             }
             break;
         case WIN_STATE:
-            if (!playerHasWon) {
-                if (game.checkPlayerWin() == game.getPlayerOne()) {
-                    Serial.println("player 1 wins, refresh to restart");
-                } else {
-                    Serial.println("player 2 wins, refresh to restart");
-                }
-                playerHasWon = true;
+            switch (win_state) {
+              case PLAYER_1:
+                Serial.println("player 1 wins, refresh to restart");
+                break;
+              case PLAYER_2:
+                Serial.println("player 2 wins, refresh to restart");
+                break;
+              case DRAW:
+                Serial.println("Draw, refresh to restart");
+                break;
             }
+            
             break;
         case FULL_BOARD_STATE:
             if (board.isBoardEmpty()) {
@@ -134,7 +139,7 @@ void loop() {
             if (currentTime - previousTime >= TOKEN_FALLING_INTERVAL) {
                 board.clearBottomRow();
                 previousTime = currentTime;
-                display.animateBoard(board.getBoard());
+                display.animateBoard(board.board);
             }
             break;
     }

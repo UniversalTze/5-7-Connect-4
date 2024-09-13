@@ -27,7 +27,6 @@ class Board {
 
         // Private helper functions
         int getTopTokenRow(int col);
-        bool placeToken(int col, int player);
         bool checkTokenFall(int row, int col);
         void updatePrevBoard();
         void copyCombo(int startRow, int startCol, int endRow, int endCol,
