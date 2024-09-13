@@ -1,4 +1,6 @@
 import * as constants from "./constants.ts";
+import { Game } from "./Game.ts";
+import { Player } from "./Player.ts";
 
 // Handles Board Functionality
 export class Board {
@@ -480,4 +482,54 @@ export class Board {
     }
     return true;
   }
+
+  /**
+   * Used to clear the board after a player has won. 
+   */
+
+  public clearBoard() { 
+    this.board = new Array(constants.BOARD_WIDTH)
+    .fill(constants.EMPTY)
+    .map(() => new Array(constants.BOARD_HEIGHT)
+        .fill(constants.EMPTY));
+  }
+
+  /** 
+   * Animate the player colour that wins snaking around. Will start from the top left corner 
+   * and then branch it into two directions. It will dissapear in the bottorm right hand corner. 
+   */
+  public WinSnakeAround(winConstant: number, frameTracker: number) {
+    if (frameTracker < constants.BOARD_HEIGHT) { 
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = winConstant;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = winConstant;
+    }     
+    else if (frameTracker < constants.BOARD_HEIGHT * 2) {
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = winConstant;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = winConstant;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
+  }
+
+  public DrawSnakeAround(winConstant: number, frameTracker: number) {
+    if (frameTracker < constants.BOARD_HEIGHT) { 
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = winConstant;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = winConstant;
+    }     
+    else if (frameTracker < constants.BOARD_HEIGHT * 2) {
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = winConstant;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = winConstant;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
+  }
 }
+

@@ -18,6 +18,7 @@ export class Arduino {
   board: Board = new Board();
   display: BoardDisplay = new BoardDisplay();
   playerHasWon: boolean = false;
+  frameCounter: number = 0; 
 
   state: number = -1;
   previousValidColumnInput: number = -1;
@@ -139,15 +140,31 @@ export class Arduino {
         break;
       case constants.WIN_STATE:
         let winningPlayer = this.game.checkPlayerWin();
-        if (!this.playerHasWon) {
-          if (winningPlayer === this.game.getPlayerOne()) {
-            alert("player 1 wins, refresh to restart");
-          } else {
-            alert("player 2 wins, refresh to restart");
-          }
-          // TODO: restart functions for seperate classes
-          this.playerHasWon = true;
+        let winCons = 0; 
+        if (!this.playerHasWon) { 
+        this.board.clearBoard();
+        this.display.animateBoard(this.board.getBoard());
+        this.playerHasWon = true;
+        } 
+        if (winningPlayer === this.game.getPlayerOne()) {
+            winCons = constants.PLAYER_1;
+        } else {
+            winCons = constants.PLAYER_2;
         }
+         //TODO: restart functions for seperate classes  
+        if (currentTime - this.previousTime >= 85) {
+            this.board.WinSnakeAround(winCons, this.frameCounter); 
+            this.frameCounter += 1;
+            this.display.animateBoard(this.board.getBoard()); 
+            this.previousTime = currentTime;
+        }
+        
+        // infinite frame loop
+        if (this.frameCounter == 24) {
+          this.frameCounter = 0;  
+        }
+         
+        
         break;
       case constants.FULL_BOARD_STATE:
         if (this.board.isBoardEmpty()) {
