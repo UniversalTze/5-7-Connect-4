@@ -6,8 +6,8 @@
 class Board {
     public:
         // Public variables
-        int board[BOARD_HEIGHT][BOARD_WIDTH];    // The game board
-        int prevBoard[BOARD_HEIGHT][BOARD_WIDTH]; // Previous board state
+        int board[BOARD_HEIGHT][BOARD_WIDTH] = {EMPTY};    // The game board
+        int prevBoard[BOARD_HEIGHT][BOARD_WIDTH] = {EMPTY}; // Previous board state
 
 
         // Public functions

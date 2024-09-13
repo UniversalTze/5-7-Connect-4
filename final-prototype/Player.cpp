@@ -1,22 +1,11 @@
-/**
- * @class Player
- * @brief Represents a player in the game.
- * 
- * The Player class stores information about a player, including their score.
- */
-class Player {
-    public:
-        Player() : playerScore(0) {};
+#include "Player.h"
 
-        int getPlayerScore() {
-            return playerScore;
-        }
+Player::Player() : playerScore(0) {};
 
-        void addPlayerScore(int score) {
-            playerScore += score;
-        }
+int Player::getPlayerScore() {
+    return playerScore;
+}
 
-    private:
-        int playerScore;
-
-};
+void Player::addPlayerScore(int score) {
+    playerScore += score;
+}

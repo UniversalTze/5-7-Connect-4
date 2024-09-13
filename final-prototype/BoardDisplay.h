@@ -7,10 +7,10 @@
 
 class BoardDisplay {
 public:
-    void animateBoard(int8_t currentBoard[][BOARD_WIDTH], int8_t rows);
-    void animateComboClear(int8_t currentBoard[][BOARD_WIDTH], int8_t clearedBoard[][BOARD_WIDTH], int8_t rows);
-    void updateScoreDisplay(int8_t playerOneScore, int8_t playerTwoScore);
-    void placeholder(int8_t previousBoard[][BOARD_WIDTH], int8_t clearedBoard[][BOARD_WIDTH], int8_t rows);
+    void animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]);
+    void animateComboClear(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
+    void updateScoreDisplay(int playerOneScore, int playerTwoScore);
+    void placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
 
 private:
     void setPixelColor(int8_t row, int8_t col, const char* color);

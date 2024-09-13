@@ -9,7 +9,6 @@ Game game;
 
 int columnInput = NO_INPUT;
 
-
 unsigned long previousTime = 0;
 unsigned long previousRotationTime = 0;
 int win_state = NO_WIN;
@@ -17,6 +16,7 @@ int state = -1;
 int previousValidColumnInput = -1;
 
 void setup() {
+    Serial.begin(9600);
     changeState(WAIT_FOR_TOKEN_STATE, millis());
     previousRotationTime = millis();
 }
@@ -128,7 +128,7 @@ void loop() {
                 Serial.println("Draw, refresh to restart");
                 break;
             }
-            
+
             break;
         case FULL_BOARD_STATE:
             if (board.isBoardEmpty()) {
