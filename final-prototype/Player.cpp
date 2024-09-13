@@ -1,6 +1,12 @@
+/**
+ * @class Player
+ * @brief Represents a player in the game.
+ * 
+ * The Player class stores information about a player, including their score.
+ */
 class Player {
     public:
-        Player(int score) : playerScore(score) {};
+        Player() : playerScore(0) {};
 
         int getPlayerScore() {
             return playerScore;

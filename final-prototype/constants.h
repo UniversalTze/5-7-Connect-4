@@ -5,7 +5,7 @@
 constexpr int BOARD_HEIGHT = 7;
 constexpr int BOARD_WIDTH = 7;
 
-
+// Board tile types
 constexpr int NO_INPUT = -1;
 constexpr int EMPTY = 0;
 constexpr int PLAYER_1 = 1;
@@ -41,4 +41,14 @@ constexpr int BOARD_ROTATION_INTERVAL = 30000;
 constexpr int PLAYER_TURN_DISPLAY = 2;
 constexpr int BOARD_ROTATION_DISPLAY = 1;
 
+// Scoring
+constexpr int WINNING_SCORE = 21;
+
+// Win States
+constexpr int NO_WIN = 0;
+constexpr int DRAW = 3;
+
+
 #endif // CONSTANTS_H
+
+
