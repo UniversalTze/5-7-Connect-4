@@ -75,19 +75,19 @@ class Board {
         }
         
         /**
-         * @brief Places a token in the specified column for the given player.
+         * Places a token in the specified column for the given player.
          *
-         * @param col The column index where the token should be placed.
-         * @param player The player number who is placing the token.
+         * @param col The column where the token should be placed.
+         * @param player The player who is placing the token.
          * @return True if the token was successfully placed, false otherwise.
          */
-        bool placeToken(int col, int player)
-        {
-            if(board[0][col] != EMPTY)
-            {
+        bool placeToken(int col, int player) {
+            if (board[0][col] != EMPTY) {
                 return false;
             }
-        }
+            board[0][col] = player;
+            return true;
+        };
 
         /**
          * @brief Checks if any token can fall in the board.
@@ -266,21 +266,6 @@ class Board {
                 }
             }
             return -1;
-        };
-
-        /**
-         * Places a token in the specified column for the given player.
-         *
-         * @param col The column where the token should be placed.
-         * @param player The player who is placing the token.
-         * @return True if the token was successfully placed, false otherwise.
-         */
-        bool placeToken(int col, int player) {
-            if (board[0][col] != EMPTY) {
-                return false;
-            }
-            board[0][col] = player;
-            return true;
         };
 
         /**

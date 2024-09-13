@@ -1,7 +1,7 @@
-// #include <Board.h>
-// #include <BoardDisplay.h>
-// #include <Game.h>
-#include <constants.h>
+#include "Board.h"
+#include "BoardDisplay.h"
+#include "Game.h"
+#include "constants.h"
 
 Board board;
 BoardDisplay display;
@@ -34,7 +34,7 @@ void loop() {
             if (timeTilRotation <= 0) {
                 Serial.println("uh oh! board is rotatin!");
                 board.rotateBoard(90);
-                display.animateBoard(board.getBoard());
+                display.animateBoard(board.board);
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 previousRotationTime = currentTime;
             }
