@@ -1,40 +1,39 @@
 #include "BoardDisplay.h"
-#include <Arduino.h>
+
+
+BoardDisplay::BoardDisplay()
+    : strip(ledCount, ledPin, NEO_GRB + NEO_KHZ800)
+{
+  int temp[7][7][2] = {{{19, 0}, {27, 0}, {70, 0}, {75, 0}, {118, 0}, {125, 0}, {168, 0}}, // {{bottom -> top}}
+  {{16, 0}, {30, 0}, {67, 0}, {78, 0}, {115, 0}, {128, 0}, {165, 0}}, // {id, on/off (0/1)}
+  {{13, 0}, {33, 0}, {64, 0}, {81, 0}, {112, 0}, {131, 0}, {162 ,0}},
+  {{10, 0}, {36, 0}, {61, 0}, {84, 0}, {109, 0}, {134, 0}, {159 ,0}},
+  {{7, 0}, {39, 0}, {58, 0}, {87, 0}, {106, 0}, {137, 0}, {156 ,0}},
+  {{4, 0}, {42, 0}, {55, 0}, {90, 0}, {103, 0}, {140, 0}, {153 ,0}},
+  {{1, 0}, {45, 0}, {52, 0}, {93, 0}, {100, 0}, {143, 0}, {150 ,0}}};
+
+  for (int i = 0; i < 7; i++) {
+      for (int j = 0; j < 7; j++) {
+          LedIds[i][j][0] = temp[i][j][0];
+          LedIds[i][j][1] = temp[i][j][1];
+      }
+  }
+}
 
 // Method to animate the board
 void BoardDisplay::animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
-    // for (int8_t row = 0; row < rows; row++) {
-    //     for (int8_t col = 0; col < BOARD_WIDTH; col++) {
-    //         if (currentBoard[row][col] == 0) {
-    //             setPixelColor(row, col, EMPTY_COLOR);
-    //         } else if (currentBoard[row][col] == 1) {
-    //             setPixelColor(row, col, PLAYER_1_COLOR);
-    //         } else if (currentBoard[row][col] == 2) {
-    //             setPixelColor(row, col, PLAYER_2_COLOR);
-    //         }
-    //     }
-    // }
-}
-
-// Method to animate clearing combos
-void BoardDisplay::animateComboClear(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
-    // for (int8_t row = 0; row < rows; row++) {
-    //     for (int8_t col = 0; col < BOARD_WIDTH; col++) {
-    //         if (currentBoard[row][col] == clearedBoard[row][col]) {
-    //             if (currentBoard[row][col] == 1) {
-    //                 setPixelColor(row, col, PLAYER_1_COLOR);
-    //             } else if (currentBoard[row][col] == 2) {
-    //                 setPixelColor(row, col, PLAYER_2_COLOR);
-    //             }
-    //         } else {
-    //             if (currentBoard[row][col] == 1) {
-    //                 flashPixel(row, col, PLAYER_1_COLOR);
-    //             } else if (currentBoard[row][col] == 2) {
-    //                 flashPixel(row, col, PLAYER_2_COLOR);
-    //             }
-    //         }
-    //     }
-    // }
+    for (int row = 0; row < BOARD_HEIGHT; row++) {
+        for (int col = 0; col < BOARD_WIDTH; col++) {
+            if (currentBoard[row][col] == 0) {
+                setPixelColor(row, col, EMPTY_COLOR);
+            } else if (currentBoard[row][col] == 1) {
+                setPixelColor(row, col, PLAYER_1_COLOR);
+            } else if (currentBoard[row][col] == 2) {
+                setPixelColor(row, col, PLAYER_2_COLOR);
+            }
+        }
+    }
+    strip.show();
 }
 
 // Method to update the score display
@@ -46,35 +45,17 @@ void BoardDisplay::updateScoreDisplay(int playerOneScore, int playerTwoScore) {
 }
 
 // Method for setting the pixel color
-void BoardDisplay::setPixelColor(int8_t row, int8_t col, const char* color) {
-    Serial.print("Setting pixel at (");
-    Serial.print(row);
-    Serial.print(", ");
-    Serial.print(col);
-    Serial.print(") to color ");
-    Serial.println(color);
-}
-
-// Method to flash a pixel
-void BoardDisplay::flashPixel(int8_t row, int8_t col, const char* originalColor) {
-    Serial.print("Flashing pixel at (");
-    Serial.print(row);
-    Serial.print(", ");
-    Serial.print(col);
-    Serial.print(") between ");
-    Serial.print(FLASH_COLOR[0]);
-    Serial.print(" and ");
-    Serial.println(originalColor);
-    // Use delay() or millis() for actual timing in practice
+void BoardDisplay::setPixelColor(int row, int col, int color[3]) {
+  strip.setPixelColor(LedIds[col][row], color[0], color[1], color[2]);
 }
 
 // Method for placeholder animation
-void BoardDisplay::placeholder(int previousBoard[][BOARD_WIDTH], int clearedBoard[][BOARD_WIDTH]) {
-    // for (int8_t i = 0; i < rows; i++) {
-    //     for (int8_t j = 0; j < BOARD_WIDTH; j++) {
-    //         if (previousBoard[i][j] != clearedBoard[i][j]) {
-    //             setPixelColor(i, j, "white"); // Assuming "white" is a color you can use
-    //         }
-    //     }
-    // }
+void BoardDisplay::placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
+    for (int i = 0; i < BOARD_HEIGHT; i++) {
+        for (int j = 0; j < BOARD_WIDTH; j++) {
+            if (previousBoard[i][j] != clearedBoard[i][j]) {
+                setPixelColor(i, j, WHITE); // Assuming "white" is a color you can use
+            }
+        }
+    }
 }

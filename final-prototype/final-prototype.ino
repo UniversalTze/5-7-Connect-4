@@ -17,8 +17,13 @@ int previousValidColumnInput = -1;
 
 void setup() {
     Serial.begin(9600);
-    changeState(WAIT_FOR_TOKEN_STATE, millis());
-    previousRotationTime = millis();
+    display.strip.begin();
+    display.strip.show();
+
+    unsigned long currentTime = millis();
+
+    changeState(WAIT_FOR_TOKEN_STATE, currentTime);
+    previousRotationTime = currentTime;
 }
 
 void loop() {
@@ -156,13 +161,10 @@ void changeState(int newState, unsigned long currentTime) {
     previousTime = currentTime;
 }
 
-void setPixelColor (int row, int col, const char* colour) {
-
-}
 void setDisplayNumber(int display, int number) {
 
 }
 
-void setBorderColor(const char* color) {
+void setBorderColor(int color[3]) {
 
 }
