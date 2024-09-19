@@ -25,14 +25,14 @@ We are using **JavaScript**, **HTML**, and **CSS** for this web prototype to ena
 - Incorporates visual elements like flashing lights and sound effects to enhance the game’s interactivity.
 
 ## Purpose of the Prototype
-This prototype is crucial for testing and fine-tuning game mechanics and visuals before transitioning to hardware with Arduino. It allows us to:
+This prototype helps test and fine-tune game mechanics and visuals before transitioning to hardware with Arduino. It allows us to:
 - Test game mechanics early and ensure the project stays on track.
 - Refine gameplay elements and visual displays.
 - Conduct user surveys and gather feedback to iterate the design.
 - Facilitate seamless integration between the software and hardware components.
 
 ## Why Connect 4?
-We chose Connect 4 because it’s simple, appeals to a wide audience, and offers great potential for enhancement. Here’s why Connect 4 was the perfect foundation:
+We chose Connect 4 because it’s simple, appeals to a wide audience, and offers great potential for enhancement. 
 - Board games foster communication, collaboration, and a sense of community.
 - They offer fun and challenge, helping players build problem-solving skills and empathy.
 - Our twist on the game—adding rotating boards and disappearing rows—creates a dynamic, fun experience that balances strategy and skill.
