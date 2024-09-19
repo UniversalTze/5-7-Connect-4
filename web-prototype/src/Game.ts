@@ -2,7 +2,7 @@
 import { NO_INPUT } from "./constants";
 import { Player } from "./Player";
 
-const WINNING_SCORE = 21;  
+const WINNING_SCORE = 4;  
 const TURN_TIME = 30000; //30 secodns in milliseconds
 const ROTATE_BOARD = 120000; // 2 minutes in milliseconds 
 // Still need to set interval for this board, and need reference to board variable 
@@ -100,7 +100,7 @@ export class Game {
     if (this.player1.getPlayerScore() >= WINNING_SCORE) { 
       this.p1haswon = true; 
     }
-    else if (this.player2.getPlayerScore() >= WINNING_SCORE) { 
+    if (this.player2.getPlayerScore() >= WINNING_SCORE) { 
       this.p2haswon = true; 
     } 
     if (this.p1haswon || this.p2haswon) { 
