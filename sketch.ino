@@ -1,119 +1,135 @@
 #include <Adafruit_NeoPixel.h>
 
-// Define parameters for the LED strip
+// Define parameters for the LED displayBoardLED
 int ledPin = 13;
 int ledCount = 300;
-
-// Define trig and echo pins for the ultrasonic sensors
-// const int column6_trigPin = 2;
-// const int column6_echoPin = 3;
-// const int column2_trigPin = 4;
-// const int column2_echoPin = 5;
-// const int column3_trigPin = 6;
-// const int column3_echoPin = 7;
-// const int column4_trigPin = 8;
-// const int column4_echoPin = 9;
-// const int column5_trigPin = 10;
-// const int column5_echoPin = 11;
-// const int column7_trigPin = A0;
-// const int column7_echoPin = A1;
-// const int column1_trigPin = A2;
-// const int column1_echoPin = A3;
 
 // Initialise variables for detecting tokens
 long duration; // makes a long variable named duration
 int distance; // makes an integer variable named distance
 
 // Variable for identifying LED ids
-int LedIds[][7][2] = {{{19, 0}, {27, 0}, {70, 0}, {75, 0}, {118, 0}, {125, 0}, {168, 0}}, // {{bottom -> top}}
-  {{16, 0}, {30, 0}, {67, 0}, {78, 0}, {115, 0}, {128, 0}, {165, 0}}, // {id, on/off (0/1)}
-  {{13, 0}, {33, 0}, {64, 0}, {81, 0}, {112, 0}, {131, 0}, {162 ,0}},
-  {{10, 0}, {36, 0}, {61, 0}, {84, 0}, {109, 0}, {134, 0}, {159 ,0}},
-  {{7, 0}, {39, 0}, {58, 0}, {87, 0}, {106, 0}, {137, 0}, {156 ,0}},
-  {{4, 0}, {42, 0}, {55, 0}, {90, 0}, {103, 0}, {140, 0}, {153 ,0}},
-  {{1, 0}, {45, 0}, {52, 0}, {93, 0}, {100, 0}, {143, 0}, {150 ,0}}};
+int LedIds[][7][2] = {{{20, 0}, {26, 0}, {70, 0}, {75, 0}, {119, 0}, {124, 0}, {168, 0}}, // {{bottom -> top}}
+  {{17, 0}, {29, 0}, {67, 0}, {78, 0}, {116, 0}, {127, 0}, {165, 0}}, // {id, on/off (0/1)}
+  {{13, 0}, {33, 0}, {63, 0}, {82, 0}, {112, 0}, {131, 0}, {161 ,0}},
+  {{10, 0}, {36, 0}, {60, 0}, {85, 0}, {109, 0}, {134, 0}, {158 ,0}},
+  {{7, 0}, {39, 0}, {57, 0}, {88, 0}, {106, 0}, {137, 0}, {155 ,0}},
+  {{4, 0}, {42, 0}, {54, 0}, {92, 0}, {103, 0}, {140, 0}, {152 ,0}},
+  {{1, 0}, {45, 0}, {51, 0}, {94, 0}, {100, 0}, {143, 0}, {149 ,0}}};
 
-Adafruit_NeoPixel strip(ledCount, ledPin, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel displayBoardLED(300, 13, NEO_GRB + NEO_KHZ800); // (led count, pin number, ...)
+Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800); // (led count, pin number, ...)
 
 int turn = 1; // Keeping track of player turns
 
-const int columnPins[][2] = {{2, 3}, {A2, A3}, {A0, A1}, {10, 11}, {8, 9}, {6, 7}, {4, 5}}; // {TRIG, ECHO}
+const int columnPins[7] = {11, A5, A4, A3, A2, A1, A0}; // {TRIG, ECHO}
 
 void setup() {
-  // Set ultrasonic sensor pins for input/output
-  for (int x = 1; x < 7; x++) {
-    pinMode(columnPins[x][0], OUTPUT);
-    pinMode(columnPins[x][1], INPUT); 
+  pinMode(11, INPUT); 
+
+  // Initialise LED displayBoardLED
+  displayBoardLED.begin();
+  displayBoardLED.show();
+
+  // Initialise LED strip for light sensors
+  photoresistorLED.begin();
+  for (int x = 0; x < 22 ; x++) {
+    photoresistorLED.setPixelColor(x, 255, 255, 255);
+    photoresistorLED.show();
   }
 
-  // Initialise LED strip
-  strip.begin();
-  strip.show();
-
   Serial.begin(9600); // Starts the serial communication on baud rate 9600
+  delay(1000);
 }
 
 void loop() {
 
-  // Detect tokens through each of the ultrasonic sensors
-  for (int x = 1; x <7 ; x++) {
-    digitalWrite(columnPins[x][0], LOW); // Resets the trigPin
-    delayMicroseconds(2); // Waits 2 microsenconds
-    digitalWrite(columnPins[x][0], HIGH); // Sets the trigPin state to HIGH
-    delayMicroseconds(10); // Waits 10 microseconds
-    digitalWrite(columnPins[x][0], LOW); // Sets the trigPin state to LOW
-    duration = pulseIn(columnPins[x][1], HIGH); // Reads the echoPin and assign it to the variable duration
-    distance= duration*0.034/2; // Calculation of the distance
-
-    Serial.print("column ");
-    Serial.print(x+1);
-    Serial.print(" ");
-    Serial.println(distance);
-
-    if (distance < 10){ // 3cm
-      AddToken(x); // Add token to the corresponding column
-      Serial.print("column ");
-      Serial.print(x+1);
-      Serial.println(" detected");
+  // Check digital pin first 
+  int digitalValue = digitalRead(columnPins[0]);
+    Serial.print("Column 1: ");
+    Serial.println(digitalValue);
+    if (digitalValue == 1){
+      Serial.print("Column 1 detected");
+      AddToken(0);
       delay(1000);
-      break;
+      return;
     }
+
+    // Check the analog pins for input
+  for (int x = 1; x < 7; x++){ // Column 2: 583, Column 3: 663, Column 4: 606, Column 5: 453, Column 6: 493, Column 7: 621
+    int sensorValue = analogRead(columnPins[x]);
+    Serial.print("Column ");
+    Serial.print(x+1);
+    Serial.print(": ");
+    Serial.println(sensorValue);
+
+  if (x == 2){ // Column 3
+    if (sensorValue > 700){ 
+          Serial.print("Column ");
+          Serial.print(x+1);
+          Serial.println(" detected");
+          AddToken(x); // Add token to the corresponding column
+          delay(1000);
+          return;
+        }
+  }
+  else if (x == 1 || x == 3 || x == 6){
+    if (sensorValue > 650){ 
+          Serial.print("Column ");
+          Serial.print(x+1);
+          Serial.println(" detected");
+          AddToken(x); // Add token to the corresponding column
+          delay(1000);
+          return;
+        }
+  }
+  else{
+    if (sensorValue > 550){ 
+          Serial.print("Column ");
+          Serial.print(x+1);
+          Serial.println(" detected");
+          AddToken(x); // Add token to the corresponding column
+          delay(1000);
+          return;
+        }
+  }
   }
   delay(100);
 }
 
+
 // Function for inserting a token into a column
 int AddToken(int columnIndex){
   int bottomTokenIndex = 0;
-  for (int x = 0; x <= 5; x++) { // Iterate to identify the lowest free slot
+  for (int x = 0; x <= 6; x++) { // Iterate to identify the lowest free slot
     if (LedIds[columnIndex][x][1] == 1){ // If slot is not empty
       bottomTokenIndex += 1; 
     }
   }
 
-  if (bottomTokenIndex < 6){ // If column is not full
+  if (bottomTokenIndex < 7){ // If column is not full
     if (turn == 1){
       for (int x = 6; x >= bottomTokenIndex; x--) { // Toggle each empty slot in order to create dropping animation
-        strip.setPixelColor(LedIds[columnIndex][x][0], 255, 0, 0);
-        strip.show();
+        displayBoardLED.setPixelColor(LedIds[columnIndex][x][0], 255, 0, 0);
+        displayBoardLED.show();
         delay(100);
-        strip.setPixelColor(LedIds[columnIndex][x][0], 0, 0, 0);
-        strip.show();
+        displayBoardLED.setPixelColor(LedIds[columnIndex][x][0], 0, 0, 0);
+        displayBoardLED.show();
       }
-      strip.setPixelColor(LedIds[columnIndex][bottomTokenIndex][0], 255, 0, 0);
-      strip.show();
+      displayBoardLED.setPixelColor(LedIds[columnIndex][bottomTokenIndex][0], 255, 0, 0);
+      displayBoardLED.show();
       LedIds[columnIndex][bottomTokenIndex][1] = 1; // Rewrite array to set slot as filled
     }
     else{
       for (int x = 6; x >= bottomTokenIndex; x--) {
-        strip.setPixelColor(LedIds[columnIndex][x][0], 255, 255, 0);
-        strip.show();
+        displayBoardLED.setPixelColor(LedIds[columnIndex][x][0], 255, 255, 0);
+        displayBoardLED.show();
         delay(100);
-        strip.setPixelColor(LedIds[columnIndex][x][0], 0, 0, 0);
-        strip.show();
+        displayBoardLED.setPixelColor(LedIds[columnIndex][x][0], 0, 0, 0);
+        displayBoardLED.show();
       }
-      strip.setPixelColor(LedIds[columnIndex][bottomTokenIndex][0], 255, 255, 0);
-      strip.show();
+      displayBoardLED.setPixelColor(LedIds[columnIndex][bottomTokenIndex][0], 255, 255, 0);
+      displayBoardLED.show();
       LedIds[columnIndex][bottomTokenIndex][1] = 1;
     }
   }
