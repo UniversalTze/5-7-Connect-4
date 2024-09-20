@@ -493,7 +493,9 @@ export class Board {
     .map(() => new Array(constants.BOARD_HEIGHT)
         .fill(constants.EMPTY));
   }
-
+  // @TODO Change Game winning score back to 21
+  
+  
   /**
    * 
    * Animate the player colour that wins snaking around. Will start from the top left corner 
