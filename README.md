@@ -6,7 +6,7 @@ DECO3801 Connect 4 Project Repo
 Authors: 
 UniversalTze 
 pchsa
-ThePyroMancer1
+ThePyromancer1
 haozhi-ryan
 
 # 5-7 Connect 4 Web Prototype

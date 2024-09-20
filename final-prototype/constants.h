@@ -5,18 +5,18 @@
 constexpr int BOARD_HEIGHT = 7;
 constexpr int BOARD_WIDTH = 7;
 
-
+// Board tile types
 constexpr int NO_INPUT = -1;
 constexpr int EMPTY = 0;
 constexpr int PLAYER_1 = 1;
 constexpr int PLAYER_2 = 2;
 
 // Colours 
-constexpr const char* EMPTY_COLOR = "#504f4f";
-constexpr const char* PLAYER_1_COLOR = "#cf4242";
-constexpr const char* PLAYER_2_COLOR = "#ddaf24";
+constexpr const int EMPTY_COLOR[3] = {0, 0, 0};
+constexpr const int PLAYER_1_COLOR[3] = {255, 0, 0};
+constexpr const int PLAYER_2_COLOR[3] = {255, 255, 0};
+constexpr const int WHITE[3] = {255, 255, 255};
 
-constexpr const char* FLASH_COLOR[] = {"white"};
 
 // Clear states
 constexpr int FULL_CLEAR = 1;
@@ -41,4 +41,18 @@ constexpr int BOARD_ROTATION_INTERVAL = 30000;
 constexpr int PLAYER_TURN_DISPLAY = 2;
 constexpr int BOARD_ROTATION_DISPLAY = 1;
 
+// Scoring
+constexpr int WINNING_SCORE = 21;
+
+// Win States
+constexpr int NO_WIN = 0;
+constexpr int DRAW = 3;
+
+// LED
+constexpr int ledPin = 13;
+constexpr int ledCount = 300;
+
+
 #endif // CONSTANTS_H
+
+
