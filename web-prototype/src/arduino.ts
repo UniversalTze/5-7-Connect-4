@@ -17,8 +17,9 @@ export class Arduino {
   game: Game = new Game();
   board: Board = new Board();
   display: BoardDisplay = new BoardDisplay();
-  playerHasWon: boolean = false;
+  endCheck: boolean = false;
   frameCounter: number = 0; 
+  drawAnimation: number = 0; 
 
   state: number = -1;
   previousValidColumnInput: number = -1;
@@ -133,18 +134,21 @@ export class Arduino {
           this.display.animateBoard(this.board.getBoard())
           console.log('pretend animation done, go back to tokens falling')
           this.changeState(constants.TOKEN_FALLING_STATE, currentTime)
-          if (this.game.checkWin()) {
+          if (this.game.checkWin() && !this.game.checkDraw()) {
             this.changeState(constants.WIN_STATE, currentTime);
+          }
+          if (this.game.checkDraw()) { 
+            this.changeState(constants.DRAW_STATE, currentTime);
           }
         }
         break;
       case constants.WIN_STATE:
         let winningPlayer = this.game.checkPlayerWin();
         let winCons = 0; 
-        if (!this.playerHasWon) { 
-        this.board.clearBoard();
-        this.display.animateBoard(this.board.getBoard());
-        this.playerHasWon = true;
+        if (!this.endCheck) { 
+          this.board.clearBoard();
+          this.display.animateBoard(this.board.getBoard());
+          this.endCheck = true;
         } 
         if (winningPlayer === this.game.getPlayerOne()) {
             winCons = constants.PLAYER_1;
@@ -163,9 +167,34 @@ export class Arduino {
         if (this.frameCounter == 24) {
           this.frameCounter = 0;  
         }
-         
-        
         break;
+
+      case constants.DRAW_STATE:  
+        if (!this.endCheck) { 
+        this.board.clearBoard();
+        this.display.animateBoard(this.board.getBoard());
+        this.endCheck = true;
+        }
+        
+        //TODO: restart functions for seperate classes  
+        if (currentTime - this.previousTime >= 85) {
+          this.board.DrawSnakeAround(this.frameCounter, this.drawAnimation); 
+          this.display.animateBoard(this.board.getBoard()); 
+          this.frameCounter += 1;
+          this.previousTime = currentTime;
+        }
+        
+        
+        // infinite frame loop
+        if (this.frameCounter == 24) {
+          this.drawAnimation += 1; 
+          this.frameCounter = 0;  
+        }
+        if (this.drawAnimation > 3) { // Reset it so it doesn't get to big in memory. (infinite loop for now)
+          this.drawAnimation = 0; 
+        }
+
+      break; 
       case constants.FULL_BOARD_STATE:
         if (this.board.isBoardEmpty()) {
           this.changeState(constants.WAIT_FOR_TOKEN_STATE, currentTime);
