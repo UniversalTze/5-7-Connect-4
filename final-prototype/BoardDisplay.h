@@ -3,6 +3,7 @@
 
 #include "constants.h" // Make sure this file includes your constants definitions
 #include <Adafruit_NeoPixel.h>  // Include the NeoPixel library
+#include <Arduino.h>
 
 
 class BoardDisplay {
@@ -17,9 +18,8 @@ public:
 
 
 private:
-    void setPixelColor(int row, int col, int color[3]);
-
-    int LedIds[7][7][2];  // Adjust the dimensions as necessary
+    void setPixelColor(int row, int col, const int color[3]);
+    int getPixelIndex(int row, int col);
 };
 
 #endif

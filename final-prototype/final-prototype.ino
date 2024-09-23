@@ -14,12 +14,28 @@ unsigned long previousRotationTime = 0;
 int win_state = NO_WIN;
 int state = -1;
 int previousValidColumnInput = -1;
+unsigned long previousInputTime = 0;
+
+Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-    Serial.begin(9600);
+    pinMode(11, INPUT); 
+
+    // Initialise LED displayBoardLED
     display.strip.begin();
     display.strip.show();
 
+    // Initialise LED strip for light sensors
+    photoresistorLED.begin();
+    for (int x = 0; x < 22 ; x++) {
+      photoresistorLED.setPixelColor(x, 255, 255, 255);
+    }
+    photoresistorLED.show();
+
+
+    Serial.begin(9600); // Starts the serial communication on baud rate 9600
+
+    delay(1000);
     unsigned long currentTime = millis();
 
     changeState(WAIT_FOR_TOKEN_STATE, currentTime);
@@ -42,6 +58,7 @@ void loop() {
                 display.animateBoard(board.board);
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 previousRotationTime = currentTime;
+                break;
             }
 
             if (remainingTurnTime <= 0) {
@@ -57,6 +74,8 @@ void loop() {
                 }
                 break;
             }
+
+            columnInput = getColumnInput(currentTime);
 
             if (columnInput == NO_INPUT) break;
 
@@ -149,11 +168,11 @@ void loop() {
             break;
     }
 
-    if (columnInput != NO_INPUT) {
-        Serial.println("ERROR: token detected outside wait for token state");
-        // Handle error behavior here e.g., play sound
-    }
-    columnInput = NO_INPUT;
+    // if (columnInput != NO_INPUT) {
+    //     Serial.println("ERROR: token detected outside wait for token state");
+    //     // Handle error behavior here e.g., play sound
+    // }
+    // columnInput = NO_INPUT;
 }
 
 void changeState(int newState, unsigned long currentTime) {
@@ -165,6 +184,26 @@ void setDisplayNumber(int display, int number) {
 
 }
 
-void setBorderColor(int color[3]) {
+void setBorderColor(const int color[3]) {
 
+}
+
+int getColumnInput(unsigned long currentTime) {
+  if (currentTime - previousInputTime < DEBOUNCE_DELAY) {
+    return NO_INPUT;
+  }
+  
+  if (digitalRead(COLUMN_PINS[0]) == 1) { // check digital pin
+    previousInputTime = currentTime;
+    return 0;
+  } 
+
+  for (int x=1; x < 7; x++) {
+    if (analogRead(COLUMN_PINS[x]) > SENSOR_THRESHOLDS[x]) {
+      previousInputTime = currentTime;
+      return x;
+    }
+  }
+
+  return NO_INPUT;
 }
