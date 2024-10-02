@@ -12,7 +12,10 @@ public:
 
     void animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]);
     void updateScoreDisplay(int playerOneScore, int playerTwoScore);
-    void placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
+    void animateComboClear(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
+    int* getRandomColor();
+    void animateFullBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]);
+    // void placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
 
     Adafruit_NeoPixel strip;
 

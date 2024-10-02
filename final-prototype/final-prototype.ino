@@ -15,6 +15,8 @@ int win_state = NO_WIN;
 int state = -1;
 int previousValidColumnInput = -1;
 unsigned long previousInputTime = 0;
+int frameCounter = 0;
+int drawAnimation = 0;
 
 Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800);
 
@@ -114,7 +116,8 @@ void loop() {
                     if (linesCleared) {
                         Serial.println("linefound");
                         changeState(ANIMATE_LINE_CLEAR_STATE, currentTime);
-                        display.placeholder(board.prevBoard, board.board);
+                        setBorderColor(display.getRandomColor());
+                        display.animateComboClear(board.prevBoard, board.board);
                     } else if (board.isBoardFull()) {
                         Serial.println("full board");
                         changeState(FULL_BOARD_STATE, currentTime);
@@ -141,19 +144,44 @@ void loop() {
             }
             break;
         case WIN_STATE:
-            switch (win_state) {
-              case PLAYER_1:
-                Serial.println("player 1 wins, refresh to restart");
-                break;
-              case PLAYER_2:
-                Serial.println("player 2 wins, refresh to restart");
-                break;
-              case DRAW:
-                Serial.println("Draw, refresh to restart");
-                break;
-            }
+            int winner = win_state;
+            board.clearBoard();
+            display.animateBoard(board.board);
 
+            if (win_state == PLAYER_1 || win_state == PLAYER_2) {
+                if (currentTime - previousTime >= 85) {
+                    board.WinSnakeAround(winner, frameCounter);
+                    frameCounter++;
+                    display.animateBoard(board.board);
+                    previousTime = currentTime;
+                }
+
+                // Infinte Frame Loop
+                if (frameCounter == 24) {
+                    frameCounter = 0;
+                }
+
+            } else { // DRAW
+                if (currentTime - previousTime >= 85) {
+                    board.DrawSnakeAround(frameCounter, drawAnimation);
+                    display.animateBoard(board.board);
+                    frameCounter++;
+                    previousTime = currentTime;
+                }
+
+                // Infinte Frame Loop
+                if (frameCounter == 24) {
+                    drawAnimation++;
+                    frameCounter = 0;
+                }
+
+                if (drawAnimation > 3) {
+                    drawAnimation = 0;
+                }
+            }
+            
             break;
+
         case FULL_BOARD_STATE:
             if (board.isBoardEmpty()) {
                 changeState(WAIT_FOR_TOKEN_STATE, currentTime);
@@ -164,6 +192,7 @@ void loop() {
                 board.clearBottomRow();
                 previousTime = currentTime;
                 display.animateBoard(board.board);
+                setBorderColor(display.getRandomColor());
             }
             break;
     }
