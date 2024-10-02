@@ -16,8 +16,8 @@ export class Game {
   private player1turn: boolean; 
   private p1haswon: boolean;
   private p2haswon: boolean; 
-  private player1: Player
-  private player2: Player
+  private player1: Player;
+  private player2: Player;
 
   constructor() {
     //leave constructor as empty for now
@@ -86,6 +86,13 @@ export class Game {
 
   }
 
+  public checkDraw(): boolean { 
+    if (this.p1haswon && this.p2haswon) { 
+      return true; 
+    }
+    return false; 
+
+  }
   /**
    * Should return true when someone has won the game
    *  */ 
@@ -93,7 +100,7 @@ export class Game {
     if (this.player1.getPlayerScore() >= WINNING_SCORE) { 
       this.p1haswon = true; 
     }
-    else if (this.player2.getPlayerScore() >= WINNING_SCORE) { 
+    if (this.player2.getPlayerScore() >= WINNING_SCORE) { 
       this.p2haswon = true; 
     } 
     if (this.p1haswon || this.p2haswon) { 

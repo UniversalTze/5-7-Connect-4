@@ -1,4 +1,6 @@
 import * as constants from "./constants.ts";
+import { Game } from "./Game.ts";
+import { Player } from "./Player.ts";
 
 // Handles Board Functionality
 export class Board {
@@ -480,4 +482,75 @@ export class Board {
     }
     return true;
   }
+
+  /**
+   * Used to clear the board after a player has won. 
+   */
+
+  public clearBoard() { 
+    this.board = new Array(constants.BOARD_WIDTH)
+    .fill(constants.EMPTY)
+    .map(() => new Array(constants.BOARD_HEIGHT)
+        .fill(constants.EMPTY));
+  }
+  // @TODO Change Game winning score back to 21
+  
+  
+  /**
+   * 
+   * Animate the player colour that wins snaking around. Will start from the top left corner 
+   * and then branch it into two directions. It will dissapear in the bottorm right hand corner. 
+   * 
+   * @param winConstant Used to indicate the player's colour that won. 
+   * @param frameTracker Used to keep track on where we are at in the animation.
+   * 
+   */
+  public WinSnakeAround(winConstant: number, frameTracker: number) {
+    if (frameTracker < constants.BOARD_HEIGHT) { 
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = winConstant;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = winConstant;
+    }     
+    else if (frameTracker < constants.BOARD_HEIGHT * 2) {
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = winConstant;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = winConstant;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
+  }
+
+  /**
+   * Animate both players colours in the game. 
+   * Animation is similar to the win snake around however, the top left corner moving right will be player 1's corner 
+   * and from the top left corner moving down will be player 2's colour. These will go from top left corner towards the bottom right 
+   * corner. 
+   * After one iteration, the colours will then switch. Player 2's colour will move right from top left corner and player 1's colour
+   * will move down, meeting once again in the bottom right corner of the board. Then, it will switch again and so on. 
+   * 
+   * @param frameTracker Used to keep track on where we are at in the animation.
+   * @param state Used to keep track off which direction player 1 and player 2 colours will move in the animation. 
+   * If winConstant is even: P1 colour will move right from top left corner and P2 colour will move down from top left corner.
+   * else P2 colour will move right from top left corner and P1 colour will move down from top left corner.
+   */
+  public DrawSnakeAround(frameTracker: number, state: number) {
+    if (frameTracker < constants.BOARD_HEIGHT) { 
+      //
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = (state % 2) ? constants.PLAYER_1 : constants.PLAYER_2 ; // determine which player's lights should be on from last iteration
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = (state % 2) ? constants.PLAYER_2 : constants.PLAYER_1;
+    }     
+    else if (frameTracker < constants.BOARD_HEIGHT * 2) {
+      this.board[frameTracker % constants.BOARD_HEIGHT][0] = constants.EMPTY;
+      this.board[0][frameTracker % constants.BOARD_HEIGHT] = constants.EMPTY
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = (state % 2) ? constants.PLAYER_1 : constants.PLAYER_2 ;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = (state % 2) ? constants.PLAYER_2 : constants.PLAYER_1;
+    }
+    else { 
+      this.board[constants.BOARD_HEIGHT - 1][frameTracker % constants.BOARD_WIDTH] = constants.EMPTY;
+      this.board[frameTracker % constants.BOARD_HEIGHT][constants.BOARD_WIDTH - 1] = constants.EMPTY;
+    }
+  }
 }
+
