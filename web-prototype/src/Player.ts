@@ -19,4 +19,8 @@ export class Player {
     public addPlayerScore(score: number): void {
         this.playerScore = this.playerScore + score;
     }
+
+    public resetPlayerScore() {
+        this.playerScore = 0
+    }
 }
