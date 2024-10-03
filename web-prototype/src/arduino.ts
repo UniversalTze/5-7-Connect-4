@@ -37,7 +37,33 @@ export class Arduino {
   setup() {
     // initialise current state
     this.changeState(constants.WAIT_FOR_TOKEN_STATE, Date.now())
+    
+  }
+
+  // Resets the game when it's restarted
+  reset() {
+    // Reset game state variables
+    this.changeState(constants.WAIT_FOR_TOKEN_STATE, Date.now())
     this.previousRotationTime = Date.now()
+    this.columnInput = constants.NO_INPUT;
+    this.previousRotationTime = 0;
+    this.endCheck = false;
+    this.frameCounter = 0;
+    this.drawAnimation = 0;
+    this.previousValidColumnInput = -1;
+    this.game.reset()
+
+    // Reset the board 
+    this.board.clearBoard(); // Clears the board data
+    this.display.animateBoard(this.board.getBoard()); // Updates the board visually
+    
+    // Reset player scores
+    this.display.updateScoreDisplay(0, 0); // Reset scores to 0
+    this.game.getPlayerOne().resetPlayerScore()
+    this.game.getPlayerTwo().resetPlayerScore()
+    
+    // Reset board colour
+    this.setBorderColor(constants.PLAYER_1_COLOR); // Set initial border color for Player 1
   }
 
   loop() {
@@ -66,6 +92,7 @@ export class Arduino {
         if (remainingTurnTime <= 0) {
           console.log(`player ${this.game.getCurrentPlayer()} ran out of time`)
           this.previousTime = currentTime;
+
           this.game.switchTurn();
           if (this.game.getCurrentPlayer() == 1) {
             this.setBorderColor(constants.PLAYER_1_COLOR);
@@ -112,8 +139,7 @@ export class Arduino {
               // switch
               console.log('linefound')
               this.changeState(constants.ANIMATE_LINE_CLEAR_STATE, currentTime)
-              let color = this.display.getRandomColor(constants.RAINBOW)
-              this.setBorderColor(color)
+
               this.display.animateComboClear(this.board.getPrevBoard(), this.board.getBoard())
             } else if (this.board.isBoardFull()) {
               console.log('full board')
@@ -143,7 +169,7 @@ export class Arduino {
         }
         break;
       case constants.WIN_STATE:
-        let winningPlayer = this.game.checkPlayerWin();
+        let winningPlayer = this.game.checkPlayerWin(this.display);
         let winCons = 0; 
         if (!this.endCheck) { 
           this.board.clearBoard();
@@ -155,13 +181,14 @@ export class Arduino {
         } else {
             winCons = constants.PLAYER_2;
         }
-         //TODO: restart functions for seperate classes  
+        
+        //TODO: restart functions for seperate classes  
         if (currentTime - this.previousTime >= 85) {
             this.board.WinSnakeAround(winCons, this.frameCounter); 
             this.frameCounter += 1;
             this.display.animateBoard(this.board.getBoard()); 
             this.previousTime = currentTime;
-        }
+        }   
         
         // infinite frame loop
         if (this.frameCounter == 24) {
