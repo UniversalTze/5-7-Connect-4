@@ -37,7 +37,7 @@ export const WIN_STATE = 3;
 export const FULL_BOARD_STATE = 4;
 export const DRAW_STATE = 5; 
     
-export const PLAYER_TURN_INTERVAL = 10000;
+export const PLAYER_TURN_INTERVAL = 10000; 
 export const TOKEN_FALLING_INTERVAL = 100;
 export const BOARD_ROTATION_INTERVAL = 30000;
 
