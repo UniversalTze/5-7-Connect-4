@@ -4,10 +4,10 @@ README FILE
 DECO3801 Connect 4 Project Repo 
 
 Authors: 
-UniversalTze 
-pchsa
-ThePyromancer1
-haozhi-ryan
+- UniversalTze 
+- pchsa
+- ThePyromancer1
+- haozhi-ryan
 
 # 5-7 Connect 4 Web Prototype
 
