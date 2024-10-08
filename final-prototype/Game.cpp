@@ -18,11 +18,11 @@ int Game::getCurrentPlayer() {
     }
 }
 
-Player Game::getPlayerOne() {
+Player& Game::getPlayerOne() {
     return player1;
 }
 
-Player Game::getPlayerTwo() {
+Player& Game::getPlayerTwo() {
     return player2;
 }
 

@@ -19,10 +19,10 @@ class Game {
         int getCurrentPlayer();
 
         // Return Player 1 object
-        Player getPlayerOne();
+        Player& getPlayerOne();
 
         // Return Player 2 object
-        Player getPlayerTwo();
+        Player& getPlayerTwo();
 
         // Switch the player's turn
         void switchTurn();
