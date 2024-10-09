@@ -29,6 +29,9 @@ class Game {
 
         // Check who has won: PLAYER_1, PLAYER_2, DRAW, or NO_WIN
         int checkWin();
+
+        // Reset game
+        void reset();
 };
 
 #endif // GAME_H

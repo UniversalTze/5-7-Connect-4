@@ -9,3 +9,7 @@ int Player::getPlayerScore() {
 void Player::addPlayerScore(int score) {
     playerScore += score;
 }
+
+void Player::reset() {
+    playerScore = 0;
+}

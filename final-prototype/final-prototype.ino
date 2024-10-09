@@ -236,3 +236,30 @@ int getColumnInput(unsigned long currentTime) {
 
   return NO_INPUT;
 }
+
+void reset() {
+    delay(1000);
+
+    unsigned long currentTime = millis();
+    changeState(WAIT_FOR_TOKEN_STATE, currentTime);
+    previousRotationTime = currentTime;
+    columnInput = NO_INPUT;
+    win_state = NO_WIN;
+    previousValidColumnInput = NO_INPUT;
+    previousInputTime = currentTime;
+    frameCounter = 0;
+    drawAnimation = 0;
+    game.reset();
+
+    // Reset board
+    board.clearBoard();
+    display.animateBoard(board.board);
+
+    // Reset players scores
+    game.getPlayerOne().reset();
+    game.getPlayerTwo().reset();
+    // TODO: reset the score board
+
+    // Reset board colour
+    setBorderColor(PLAYER_1_COLOR)
+}

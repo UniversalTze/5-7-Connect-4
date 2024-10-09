@@ -41,3 +41,9 @@ int Game::checkWin() {
         return NO_WIN;
     }
 }
+
+void Game::reset() {
+    player1turn = true;  
+    p1haswon = false; 
+    p2haswon = false; 
+}
