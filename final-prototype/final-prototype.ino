@@ -46,6 +46,8 @@ void setup() {
     display.turnTimer.clear();
     display.turnTimer.setBrightness(7);
 
+    pinMode(buttonPin, INPUT_PULLUP);
+
     delay(1000);
     unsigned long currentTime = millis();
 
@@ -278,5 +280,5 @@ void reset() {
 }
 
 bool checkReset() {
-    return false;
+    return digitalRead(buttonPin) == LOW;
 }
