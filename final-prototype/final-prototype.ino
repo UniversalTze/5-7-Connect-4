@@ -54,6 +54,12 @@ void setup() {
 }
 
 void loop() {
+    // Check if reset button pressed
+    if (checkReset()) {
+        reset();
+        return;
+    }
+
     unsigned long currentTime = millis();
     unsigned long timeTilRotation = max(0, BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime));
     display.updateRotationTimer(timeTilRotation);
@@ -269,4 +275,8 @@ void reset() {
 
     // Reset board colour
     setBorderColor(PLAYER_1_COLOR)
+}
+
+bool checkReset() {
+    return false;
 }
