@@ -1,9 +1,11 @@
 // Any import statements come above this. 
 import { NO_INPUT } from "./constants";
 import { Player } from "./Player";
+import { BoardDisplay } from "./BoardDisplay.ts";
+import { Arduino } from "./arduino.ts";
 
-const WINNING_SCORE = 21;  
-const TURN_TIME = 30000; //30 secodns in milliseconds
+const WINNING_SCORE = 21;
+const TURN_TIME = 30000; //30 seconds in milliseconds
 const ROTATE_BOARD = 120000; // 2 minutes in milliseconds 
 // Still need to set interval for this board, and need reference to board variable 
 // to complete this function. 
@@ -114,7 +116,7 @@ export class Game {
    * This is used to determine which player has won. 
    * @returns 
    */
-  public checkPlayerWin(): Player { 
+  public checkPlayerWin(display: BoardDisplay): Player { 
     if (this.p1haswon && this.p2haswon) { 
       console.log("Draw has occured"); 
       // TODO: what should we do in this scenario.....
@@ -122,9 +124,12 @@ export class Game {
     }
     else if (this.p1haswon) { 
       console.log("Player 1 has won");
+      // Pop up window for restarting the game
+      
       return this.player1; 
     }
     console.log("Player 2 has won")
+
     return this.player2; 
   }
 
@@ -138,5 +143,11 @@ export class Game {
 
   public getPlayerTwo(): Player {
     return this.player2;
+  }
+
+  public reset() {
+    this.player1turn = true;  
+    this.p1haswon = false; 
+    this.p2haswon = false; 
   }
 }
