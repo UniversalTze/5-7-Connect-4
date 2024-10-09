@@ -37,6 +37,15 @@ void setup() {
 
     Serial.begin(9600); // Starts the serial communication on baud rate 9600
 
+    display.player1Score.clear();
+    display.player1Score.setBrightness(7); // set the brightness to 7 (0:dimmest, 7:brightest)
+    display.player2Score.clear();
+    display.player2Score.setBrightness(7);
+    display.rotationTimer.clear();
+    display.rotationTimer.setBrightness(7);
+    display.turnTimer.clear();
+    display.turnTimer.setBrightness(7);
+
     delay(1000);
     unsigned long currentTime = millis();
 
@@ -47,12 +56,12 @@ void setup() {
 void loop() {
     unsigned long currentTime = millis();
     unsigned long timeTilRotation = max(0, BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime));
-    setDisplayNumber(BOARD_ROTATION_DISPLAY, timeTilRotation / 1000.0);
+    display.updateRotationTimer(timeTilRotation);
 
     switch (state) {
         case WAIT_FOR_TOKEN_STATE: {
             unsigned long remainingTurnTime = (PLAYER_TURN_INTERVAL - (currentTime - previousTime));
-            setDisplayNumber(PLAYER_TURN_DISPLAY, remainingTurnTime / 1000.0);
+            display.updateTurnTimer(remainingTurnTime);
 
             if (timeTilRotation <= 0) {
                 Serial.println("uh oh! board is rotatin!");
@@ -209,10 +218,6 @@ void changeState(int newState, unsigned long currentTime) {
     previousTime = currentTime;
 }
 
-void setDisplayNumber(int display, int number) {
-
-}
-
 void setBorderColor(const int color[3]) {
 
 }
@@ -258,7 +263,9 @@ void reset() {
     // Reset players scores
     game.getPlayerOne().reset();
     game.getPlayerTwo().reset();
-    // TODO: reset the score board
+    display.rotationTimer.clear();
+    display.turnTimer.clear();
+    display.updateScoreDisplay(0, 0)
 
     // Reset board colour
     setBorderColor(PLAYER_1_COLOR)

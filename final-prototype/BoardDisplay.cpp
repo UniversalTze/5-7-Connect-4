@@ -2,17 +2,21 @@
 #include <stdlib.h>
 
 BoardDisplay::BoardDisplay()
-    : strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800){}
+    : strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800), 
+      player1Score(p1ScoreClkPin, p1ScoreDioPin),
+      player2Score(p2ScoreClkPin, p2ScoreDioPin),
+      rotationTimer(rotationClkPin, rotationDioPin),
+      turnTimer(turnClkPin, turnDioPin) {}
 
 // Method to animate the board
 void BoardDisplay::animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
     for (int row = 0; row < BOARD_HEIGHT; row++) {
         for (int col = 0; col < BOARD_WIDTH; col++) {
-            if (currentBoard[row][col] == 0) {
+            if (currentBoard[row][col] == EMPTY) {
                 setPixelColor(row, col, EMPTY_COLOR);
-            } else if (currentBoard[row][col] == 1) {
+            } else if (currentBoard[row][col] == PLAYER_1) {
                 setPixelColor(row, col, PLAYER_1_COLOR);
-            } else if (currentBoard[row][col] == 2) {
+            } else if (currentBoard[row][col] == PLAYER_2) {
                 setPixelColor(row, col, PLAYER_2_COLOR);
             }
         }
@@ -26,6 +30,24 @@ void BoardDisplay::updateScoreDisplay(int playerOneScore, int playerTwoScore) {
     Serial.println(playerOneScore);
     Serial.print("Player 2 Score: ");
     Serial.println(playerTwoScore);
+    player1Score.showNumberDec(playerOneScore, false);  // Show the player one's score
+    player2Score.showNumberDec(playerTwoScore, false);  // Show the player two's score
+}
+
+void BoardDisplay::updateRotationTimer(unsigned long time) {
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the rotation timer (as XX.XX format)
+    rotationTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
+}
+
+void BoardDisplay::updateTurnTimer(unsigned long time) {
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the turn timer (as XX.XX format)
+    turnTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
 }
 
 // Method for setting the pixel color
