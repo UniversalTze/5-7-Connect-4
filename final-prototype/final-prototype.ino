@@ -37,6 +37,17 @@ void setup() {
 
     Serial.begin(9600); // Starts the serial communication on baud rate 9600
 
+    display.player1Score.clear();
+    display.player1Score.setBrightness(7); // set the brightness to 7 (0:dimmest, 7:brightest)
+    display.player2Score.clear();
+    display.player2Score.setBrightness(7);
+    display.rotationTimer.clear();
+    display.rotationTimer.setBrightness(7);
+    display.turnTimer.clear();
+    display.turnTimer.setBrightness(7);
+
+    pinMode(buttonPin, INPUT_PULLUP);
+
     delay(1000);
     unsigned long currentTime = millis();
 
@@ -45,14 +56,20 @@ void setup() {
 }
 
 void loop() {
+    // Check if reset button pressed
+    if (checkReset()) {
+        reset();
+        return;
+    }
+
     unsigned long currentTime = millis();
     unsigned long timeTilRotation = max(0, BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime));
-    setDisplayNumber(BOARD_ROTATION_DISPLAY, timeTilRotation / 1000.0);
+    display.updateRotationTimer(timeTilRotation);
 
     switch (state) {
         case WAIT_FOR_TOKEN_STATE: {
             unsigned long remainingTurnTime = (PLAYER_TURN_INTERVAL - (currentTime - previousTime));
-            setDisplayNumber(PLAYER_TURN_DISPLAY, remainingTurnTime / 1000.0);
+            display.updateTurnTimer(remainingTurnTime);
 
             if (timeTilRotation <= 0) {
                 Serial.println("uh oh! board is rotatin!");
@@ -209,10 +226,6 @@ void changeState(int newState, unsigned long currentTime) {
     previousTime = currentTime;
 }
 
-void setDisplayNumber(int display, int number) {
-
-}
-
 void setBorderColor(const int color[3]) {
 
 }
@@ -235,4 +248,37 @@ int getColumnInput(unsigned long currentTime) {
   }
 
   return NO_INPUT;
+}
+
+void reset() {
+    delay(1000);
+
+    unsigned long currentTime = millis();
+    changeState(WAIT_FOR_TOKEN_STATE, currentTime);
+    previousRotationTime = currentTime;
+    columnInput = NO_INPUT;
+    win_state = NO_WIN;
+    previousValidColumnInput = NO_INPUT;
+    previousInputTime = currentTime;
+    frameCounter = 0;
+    drawAnimation = 0;
+    game.reset();
+
+    // Reset board
+    board.clearBoard();
+    display.animateBoard(board.board);
+
+    // Reset players scores
+    game.getPlayerOne().reset();
+    game.getPlayerTwo().reset();
+    display.rotationTimer.clear();
+    display.turnTimer.clear();
+    display.updateScoreDisplay(0, 0)
+
+    // Reset board colour
+    setBorderColor(PLAYER_1_COLOR)
+}
+
+bool checkReset() {
+    return digitalRead(buttonPin) == LOW;
 }

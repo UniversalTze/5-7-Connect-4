@@ -18,11 +18,11 @@ int Game::getCurrentPlayer() {
     }
 }
 
-Player Game::getPlayerOne() {
+Player& Game::getPlayerOne() {
     return player1;
 }
 
-Player Game::getPlayerTwo() {
+Player& Game::getPlayerTwo() {
     return player2;
 }
 
@@ -40,4 +40,10 @@ int Game::checkWin() {
     } else {
         return NO_WIN;
     }
+}
+
+void Game::reset() {
+    player1turn = true;  
+    p1haswon = false; 
+    p2haswon = false; 
 }

@@ -80,6 +80,18 @@ constexpr int LED_IDS[7][7] = {
 constexpr int COLUMN_PINS[7] = {11, A5, A4, A3, A2, A1, A0};
 constexpr int SENSOR_THRESHOLDS[7] = {-1, 650, 700, 650, 550, 550, 650};
 constexpr int DEBOUNCE_DELAY = 1000;
+constexpr int buttonPin = 10;
+
+
+// SSD Display
+constexpr int p1ScoreDioPin = 3;
+constexpr int p1ScoreClkPin = 2;
+constexpr int p2ScoreDioPin = 5;
+constexpr int p2ScoreClkPin = 4;
+constexpr int rotationDioPin = 7;
+constexpr int rotationClkPin = 6;
+constexpr int turnDioPin = 9;
+constexpr int turnClkPin = 8;
 
 #endif // CONSTANTS_H
 
