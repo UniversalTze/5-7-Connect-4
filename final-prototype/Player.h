@@ -9,6 +9,7 @@ class Player {
         Player();
         int getPlayerScore(); 
         void addPlayerScore(int score);
+        void reset();
 };
 
 #endif // PLAYER_H

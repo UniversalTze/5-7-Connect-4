@@ -18,11 +18,11 @@ int Game::getCurrentPlayer() {
     }
 }
 
-Player Game::getPlayerOne() {
+Player& Game::getPlayerOne() {
     return player1;
 }
 
-Player Game::getPlayerTwo() {
+Player& Game::getPlayerTwo() {
     return player2;
 }
 
@@ -31,13 +31,19 @@ void Game::switchTurn() {
 }
 
 int Game::checkWin() {
-    if (p1haswon && p2haswon) {
+    if (player1.getPlayerScore() >= WINNING_SCORE && player2.getPlayerScore() >= WINNING_SCORE) {
         return DRAW;
-    } else if (p1haswon) {
+    } else if (player1.getPlayerScore() >= WINNING_SCORE) {
         return PLAYER_1;
-    } else if (p2haswon) {
+    } else if (player2.getPlayerScore() >= WINNING_SCORE) {
         return PLAYER_2;
     } else {
         return NO_WIN;
     }
+}
+
+void Game::reset() {
+    player1turn = true;  
+    p1haswon = false; 
+    p2haswon = false; 
 }

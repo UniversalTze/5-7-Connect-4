@@ -14,49 +14,111 @@ unsigned long previousRotationTime = 0;
 int win_state = NO_WIN;
 int state = -1;
 int previousValidColumnInput = -1;
+unsigned long previousInputTime = 0;
+int frameCounter = 0;
+int drawAnimation = 0;
+
+Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800);
+
+TM1637Display player1Score = TM1637Display(p1ScoreClkPin, p1ScoreDioPin);
+TM1637Display player2Score = TM1637Display(p2ScoreClkPin, p2ScoreDioPin);
+TM1637Display rotationTimer = TM1637Display(rotationClkPin, rotationDioPin);
+TM1637Display turnTimer = TM1637Display(turnClkPin, turnDioPin);
 
 void setup() {
-    Serial.begin(9600);
+    pinMode(11, INPUT); 
+
+    // Initialise LED displayBoardLED
     display.strip.begin();
     display.strip.show();
 
+    // Initialise LED strip for light sensors
+    photoresistorLED.begin();
+    for (int x = 0; x < 22 ; x++) {
+      photoresistorLED.setPixelColor(x, 255, 255, 255);
+    }
+    photoresistorLED.show();
+
+
+    Serial.begin(9600); // Starts the serial communication on baud rate 9600
+
+    player1Score.clear();
+    player1Score.setBrightness(7); // set the brightness to 7 (0:dimmest, 7:brightest)
+    player2Score.clear();
+    player2Score.setBrightness(7);
+    rotationTimer.clear();
+    rotationTimer.setBrightness(7);
+    turnTimer.clear();
+    turnTimer.setBrightness(7);
+
+    pinMode(buttonPin, INPUT_PULLUP);
+
+    delay(1000);
     unsigned long currentTime = millis();
 
     changeState(WAIT_FOR_TOKEN_STATE, currentTime);
     previousRotationTime = currentTime;
+    // display.updateScoreDisplay(0, 0);
+    player1Score.showNumberDec(0);  // Show the player one's score
+    player2Score.showNumberDec(0);  
 }
 
 void loop() {
+    // Check if reset button pressed
+    if (checkReset()) {
+        reset();
+        return;
+    }
+
     unsigned long currentTime = millis();
-    unsigned long timeTilRotation = max(0, BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime));
-    setDisplayNumber(BOARD_ROTATION_DISPLAY, timeTilRotation / 1000.0);
+    unsigned long timeTilRotation = BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime);
+
+    if (game.checkWin() == 0) {
+      updateRotationTimer(timeTilRotation);
+    }
 
     switch (state) {
         case WAIT_FOR_TOKEN_STATE: {
             unsigned long remainingTurnTime = (PLAYER_TURN_INTERVAL - (currentTime - previousTime));
-            setDisplayNumber(PLAYER_TURN_DISPLAY, remainingTurnTime / 1000.0);
+            updateTurnTimer(remainingTurnTime);
+            
+            unsigned long flashTime = remainingTurnTime % FLASH_CYCLE;
 
-            if (timeTilRotation <= 0) {
+            if (game.getCurrentPlayer() == PLAYER_1) {
+              if (flashTime >= FLASH_ON) {
+                player1Score.clear();
+              } else {
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+              }
+            } else {
+              if (flashTime >= FLASH_ON) {
+                player2Score.clear();
+              } else {
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());  // Show the player one's score
+              }
+            }
+
+            if (timeTilRotation >= TIMER_LIMIT) {
                 Serial.println("uh oh! board is rotatin!");
                 board.rotateBoard(90);
                 display.animateBoard(board.board);
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 previousRotationTime = currentTime;
+                break;
             }
 
-            if (remainingTurnTime <= 0) {
+            if (remainingTurnTime >= TIMER_LIMIT) {
                 Serial.print("player ");
                 Serial.print(game.getCurrentPlayer());
                 Serial.println(" ran out of time");
                 previousTime = currentTime;
                 game.switchTurn();
-                if (game.getCurrentPlayer() == 1) {
-                    setBorderColor(PLAYER_1_COLOR);
-                } else {
-                    setBorderColor(PLAYER_2_COLOR);
-                }
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());
                 break;
             }
+
+            columnInput = getColumnInput(currentTime);
 
             if (columnInput == NO_INPUT) break;
 
@@ -64,6 +126,8 @@ void loop() {
             Serial.println(columnInput);
 
             if (board.placeToken(columnInput, game.getCurrentPlayer())) {
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());
                 Serial.println("valid column");
                 previousValidColumnInput = columnInput;
                 display.animateBoard(board.board);
@@ -91,11 +155,14 @@ void loop() {
                     previousValidColumnInput = NO_INPUT;
                     game.getPlayerOne().addPlayerScore(points[0]);
                     game.getPlayerTwo().addPlayerScore(points[1]);
-                    display.updateScoreDisplay(game.getPlayerOne().getPlayerScore(), game.getPlayerTwo().getPlayerScore());
+                    player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                    player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());  
+                    // display.updateScoreDisplay(game.getPlayerOne().getPlayerScore(), game.getPlayerTwo().getPlayerScore());
                     if (linesCleared) {
                         Serial.println("linefound");
                         changeState(ANIMATE_LINE_CLEAR_STATE, currentTime);
-                        display.placeholder(board.prevBoard, board.board);
+                        setBorderColor(display.getRandomColor());
+                        display.animateComboClear(board.prevBoard, board.board);
                     } else if (board.isBoardFull()) {
                         Serial.println("full board");
                         changeState(FULL_BOARD_STATE, currentTime);
@@ -116,25 +183,52 @@ void loop() {
                 Serial.println("pretend animation done, go back to tokens falling");
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 win_state = game.checkWin();
-                if (win_state) {
+                Serial.println(win_state);
+                if (win_state != 0) {
                     changeState(WIN_STATE, currentTime);
+                    board.clearBoard();
+                    display.animateBoard(board.board);
+
                 }
             }
             break;
         case WIN_STATE:
-            switch (win_state) {
-              case PLAYER_1:
-                Serial.println("player 1 wins, refresh to restart");
-                break;
-              case PLAYER_2:
-                Serial.println("player 2 wins, refresh to restart");
-                break;
-              case DRAW:
-                Serial.println("Draw, refresh to restart");
-                break;
-            }
+            int winner = win_state;
 
+            if (win_state == PLAYER_1 || win_state == PLAYER_2) {
+                if (currentTime - previousTime >= 85) {
+                    board.WinSnakeAround(winner, frameCounter);
+                    frameCounter++;
+                    display.animateBoard(board.board);
+                    previousTime = currentTime;
+                }
+
+                // Infinte Frame Loop
+                if (frameCounter == 24) {
+                    frameCounter = 0;
+                }
+
+            } else { // DRAW
+                if (currentTime - previousTime >= 85) {
+                    board.DrawSnakeAround(frameCounter, drawAnimation);
+                    display.animateBoard(board.board);
+                    frameCounter++;
+                    previousTime = currentTime;
+                }
+
+                // Infinte Frame Loop
+                if (frameCounter == 24) {
+                    drawAnimation++;
+                    frameCounter = 0;
+                }
+
+                if (drawAnimation > 3) {
+                    drawAnimation = 0;
+                }
+            }
+            
             break;
+
         case FULL_BOARD_STATE:
             if (board.isBoardEmpty()) {
                 changeState(WAIT_FOR_TOKEN_STATE, currentTime);
@@ -145,15 +239,16 @@ void loop() {
                 board.clearBottomRow();
                 previousTime = currentTime;
                 display.animateBoard(board.board);
+                setBorderColor(display.getRandomColor());
             }
             break;
     }
 
-    if (columnInput != NO_INPUT) {
-        Serial.println("ERROR: token detected outside wait for token state");
-        // Handle error behavior here e.g., play sound
-    }
-    columnInput = NO_INPUT;
+    // if (columnInput != NO_INPUT) {
+    //     Serial.println("ERROR: token detected outside wait for token state");
+    //     // Handle error behavior here e.g., play sound
+    // }
+    // columnInput = NO_INPUT;
 }
 
 void changeState(int newState, unsigned long currentTime) {
@@ -161,10 +256,80 @@ void changeState(int newState, unsigned long currentTime) {
     previousTime = currentTime;
 }
 
-void setDisplayNumber(int display, int number) {
+void setBorderColor(const int color[3]) {
 
 }
 
-void setBorderColor(int color[3]) {
+int getColumnInput(unsigned long currentTime) {
+  if (currentTime - previousInputTime < DEBOUNCE_DELAY) {
+    return NO_INPUT;
+  }
+  
+  if (digitalRead(COLUMN_PINS[0]) == 1) { // check digital pin
+    previousInputTime = currentTime;
+    return 0;
+  } 
 
+  for (int x=1; x < 7; x++) {
+    if (analogRead(COLUMN_PINS[x]) > SENSOR_THRESHOLDS[x]) {
+      previousInputTime = currentTime;
+      return x;
+    }
+  }
+
+  return NO_INPUT;
+}
+
+void reset() {
+    delay(1000);
+
+    unsigned long currentTime = millis();
+    changeState(WAIT_FOR_TOKEN_STATE, currentTime);
+    previousRotationTime = currentTime;
+    columnInput = NO_INPUT;
+    win_state = NO_WIN;
+    previousValidColumnInput = NO_INPUT;
+    previousInputTime = currentTime;
+    frameCounter = 0;
+    drawAnimation = 0;
+    game.reset();
+
+    // Reset board
+    board.clearBoard();
+    display.animateBoard(board.board);
+
+    // Reset players scores
+    game.getPlayerOne().reset();
+    game.getPlayerTwo().reset();
+    rotationTimer.clear();
+    // display.turnTimer.clear();
+    // display.updateScoreDisplay(0, 0);
+    player1Score.showNumberDec(0);  // Show the player one's score
+    player2Score.showNumberDec(0);
+
+    // Reset board colour
+    // setBorderColor(PLAYER_1_COLOR)
+}
+
+bool checkReset() {
+    return digitalRead(buttonPin) == LOW;
+}
+
+void updateRotationTimer(unsigned long time) {
+    if (time > TIMER_LIMIT) {
+      time = 0;
+    }
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the rotation timer (as XX.XX format)
+    rotationTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
+}
+
+void updateTurnTimer(unsigned long time) {
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the turn timer (as XX.XX format)
+    turnTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
 }

@@ -19,6 +19,10 @@ class Board {
         bool isBoardFull();
         bool isBoardEmpty();
         bool clearBottomRow();
+        void clearBoard();
+        void WinSnakeAround(int winConstant, int frameTracker);
+        void DrawSnakeAround(int frameTracker, int state);
+
 
     private:
         // Private variables

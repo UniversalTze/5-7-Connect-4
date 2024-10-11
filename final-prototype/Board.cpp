@@ -565,3 +565,61 @@
 
       return comboExists;
   };
+
+
+    /**
+     * @brief Clears the game board by setting all positions to EMPTY.
+     */
+    void Board::clearBoard()
+    {
+        for (int i = 0; i < m_row; i++) {
+            for (int j = 0; j < m_col; j++) {
+                board[i][j] = EMPTY;
+            }
+        }
+    };
+
+    /**
+     * @brief Updates the board to create a "snake" pattern around the edges based on the frameTracker.
+     *
+     * This function modifies the board to create a visual effect where a "snake" pattern moves around the edges.
+     * The pattern is determined by the frameTracker value and the winConstant.
+     *
+     * @param winConstant The value to be placed on the board to represent the "snake".
+     * @param frameTracker The current frame count used to determine the position of the "snake".
+     */
+    void Board::WinSnakeAround(int winConstant, int frameTracker)
+    {
+        if (frameTracker < BOARD_HEIGHT) {
+            board[frameTracker % BOARD_HEIGHT][0] = winConstant;
+            board[0][frameTracker % BOARD_HEIGHT] = winConstant;
+        }
+        else if (frameTracker < BOARD_HEIGHT * 2) {
+            board[frameTracker % BOARD_HEIGHT][0] = EMPTY;
+            board[0][frameTracker % BOARD_HEIGHT] = EMPTY;
+            board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = winConstant;
+            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = winConstant;
+        }
+        else {
+            board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = EMPTY;
+            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = EMPTY;
+        }
+    }
+
+    void Board::DrawSnakeAround(int frameTracker, int state)
+    {
+        if (frameTracker < BOARD_HEIGHT) {
+            board[frameTracker % BOARD_HEIGHT][0] = (state % 2) ? PLAYER_1 : PLAYER_2;
+            board[0][frameTracker % BOARD_HEIGHT] = (state % 2) ? PLAYER_2 : PLAYER_1;
+        }
+        else if (frameTracker < BOARD_HEIGHT * 2) {
+            board[frameTracker % BOARD_HEIGHT][0] = EMPTY;
+            board[0][frameTracker % BOARD_HEIGHT] = EMPTY;
+            board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = (state % 2) ? PLAYER_1 : PLAYER_2;
+            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = (state % 2) ? PLAYER_2 : PLAYER_1;
+        }
+        else {
+            board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = EMPTY;
+            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = EMPTY;
+        }
+    }

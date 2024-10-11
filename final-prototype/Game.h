@@ -19,16 +19,19 @@ class Game {
         int getCurrentPlayer();
 
         // Return Player 1 object
-        Player getPlayerOne();
+        Player& getPlayerOne();
 
         // Return Player 2 object
-        Player getPlayerTwo();
+        Player& getPlayerTwo();
 
         // Switch the player's turn
         void switchTurn();
 
         // Check who has won: PLAYER_1, PLAYER_2, DRAW, or NO_WIN
         int checkWin();
+
+        // Reset game
+        void reset();
 };
 
 #endif // GAME_H
