@@ -23,10 +23,10 @@ public:
     // void placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
 
     Adafruit_NeoPixel strip;
-    TM1637Display player1Score;
-    TM1637Display player2Score;
-    TM1637Display rotationTimer;
-    TM1637Display turnTimer;
+    // TM1637Display player1Score;
+    // TM1637Display player2Score;
+    // TM1637Display rotationTimer;
+    // TM1637Display turnTimer;
 
 private:
     void setPixelColor(int row, int col, int *color);

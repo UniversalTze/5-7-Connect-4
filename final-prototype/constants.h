@@ -54,13 +54,14 @@ constexpr int FULL_BOARD_STATE = 4;
 constexpr int PLAYER_TURN_INTERVAL = 10000;
 constexpr int TOKEN_FALLING_INTERVAL = 100;
 constexpr int BOARD_ROTATION_INTERVAL = 30000;
+constexpr int FLASH_ROTATION_INTERVAL = 500;
 
 // Display types
 constexpr int PLAYER_TURN_DISPLAY = 2;
 constexpr int BOARD_ROTATION_DISPLAY = 1;
 
 // Scoring
-constexpr int WINNING_SCORE = 4;
+constexpr int WINNING_SCORE = 21;
 
 // Win States
 constexpr int NO_WIN = 0;
@@ -87,16 +88,19 @@ constexpr int DEBOUNCE_DELAY = 1000;
 constexpr int buttonPin = 10;
 
 
-// SSD Display
-constexpr int p1ScoreDioPin = 3;
-constexpr int p1ScoreClkPin = 2;
-constexpr int p2ScoreDioPin = 5;
-constexpr int p2ScoreClkPin = 4;
-constexpr int rotationDioPin = 7;
-constexpr int rotationClkPin = 6;
+// SSD Display7,6,9,8,3,2,5,4
+constexpr int p1ScoreDioPin = 7;
+constexpr int p1ScoreClkPin = 6;
+constexpr int p2ScoreDioPin = 3;
+constexpr int p2ScoreClkPin = 2;
+constexpr int rotationDioPin = 5;
+constexpr int rotationClkPin = 4;
 constexpr int turnDioPin = 9;
 constexpr int turnClkPin = 8;
 
+constexpr int TIMER_LIMIT = 10000000;
+constexpr int FLASH_CYCLE = 900;
+constexpr int FLASH_ON = 500;
 #endif // CONSTANTS_H
 
 

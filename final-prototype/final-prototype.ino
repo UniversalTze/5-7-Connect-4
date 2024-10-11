@@ -20,6 +20,11 @@ int drawAnimation = 0;
 
 Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800);
 
+TM1637Display player1Score = TM1637Display(p1ScoreClkPin, p1ScoreDioPin);
+TM1637Display player2Score = TM1637Display(p2ScoreClkPin, p2ScoreDioPin);
+TM1637Display rotationTimer = TM1637Display(rotationClkPin, rotationDioPin);
+TM1637Display turnTimer = TM1637Display(turnClkPin, turnDioPin);
+
 void setup() {
     pinMode(11, INPUT); 
 
@@ -37,14 +42,14 @@ void setup() {
 
     Serial.begin(9600); // Starts the serial communication on baud rate 9600
 
-    display.player1Score.clear();
-    display.player1Score.setBrightness(7); // set the brightness to 7 (0:dimmest, 7:brightest)
-    display.player2Score.clear();
-    display.player2Score.setBrightness(7);
-    display.rotationTimer.clear();
-    display.rotationTimer.setBrightness(7);
-    display.turnTimer.clear();
-    display.turnTimer.setBrightness(7);
+    player1Score.clear();
+    player1Score.setBrightness(7); // set the brightness to 7 (0:dimmest, 7:brightest)
+    player2Score.clear();
+    player2Score.setBrightness(7);
+    rotationTimer.clear();
+    rotationTimer.setBrightness(7);
+    turnTimer.clear();
+    turnTimer.setBrightness(7);
 
     pinMode(buttonPin, INPUT_PULLUP);
 
@@ -53,6 +58,9 @@ void setup() {
 
     changeState(WAIT_FOR_TOKEN_STATE, currentTime);
     previousRotationTime = currentTime;
+    // display.updateScoreDisplay(0, 0);
+    player1Score.showNumberDec(0);  // Show the player one's score
+    player2Score.showNumberDec(0);  
 }
 
 void loop() {
@@ -63,15 +71,34 @@ void loop() {
     }
 
     unsigned long currentTime = millis();
-    unsigned long timeTilRotation = max(0, BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime));
-    display.updateRotationTimer(timeTilRotation);
+    unsigned long timeTilRotation = BOARD_ROTATION_INTERVAL - (currentTime - previousRotationTime);
+
+    if (game.checkWin() == 0) {
+      updateRotationTimer(timeTilRotation);
+    }
 
     switch (state) {
         case WAIT_FOR_TOKEN_STATE: {
             unsigned long remainingTurnTime = (PLAYER_TURN_INTERVAL - (currentTime - previousTime));
-            display.updateTurnTimer(remainingTurnTime);
+            updateTurnTimer(remainingTurnTime);
+            
+            unsigned long flashTime = remainingTurnTime % FLASH_CYCLE;
 
-            if (timeTilRotation <= 0) {
+            if (game.getCurrentPlayer() == PLAYER_1) {
+              if (flashTime >= FLASH_ON) {
+                player1Score.clear();
+              } else {
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+              }
+            } else {
+              if (flashTime >= FLASH_ON) {
+                player2Score.clear();
+              } else {
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());  // Show the player one's score
+              }
+            }
+
+            if (timeTilRotation >= TIMER_LIMIT) {
                 Serial.println("uh oh! board is rotatin!");
                 board.rotateBoard(90);
                 display.animateBoard(board.board);
@@ -80,17 +107,14 @@ void loop() {
                 break;
             }
 
-            if (remainingTurnTime <= 0) {
+            if (remainingTurnTime >= TIMER_LIMIT) {
                 Serial.print("player ");
                 Serial.print(game.getCurrentPlayer());
                 Serial.println(" ran out of time");
                 previousTime = currentTime;
                 game.switchTurn();
-                if (game.getCurrentPlayer() == 1) {
-                    setBorderColor(PLAYER_1_COLOR);
-                } else {
-                    setBorderColor(PLAYER_2_COLOR);
-                }
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());
                 break;
             }
 
@@ -102,6 +126,8 @@ void loop() {
             Serial.println(columnInput);
 
             if (board.placeToken(columnInput, game.getCurrentPlayer())) {
+                player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());
                 Serial.println("valid column");
                 previousValidColumnInput = columnInput;
                 display.animateBoard(board.board);
@@ -129,7 +155,9 @@ void loop() {
                     previousValidColumnInput = NO_INPUT;
                     game.getPlayerOne().addPlayerScore(points[0]);
                     game.getPlayerTwo().addPlayerScore(points[1]);
-                    display.updateScoreDisplay(game.getPlayerOne().getPlayerScore(), game.getPlayerTwo().getPlayerScore());
+                    player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
+                    player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());  
+                    // display.updateScoreDisplay(game.getPlayerOne().getPlayerScore(), game.getPlayerTwo().getPlayerScore());
                     if (linesCleared) {
                         Serial.println("linefound");
                         changeState(ANIMATE_LINE_CLEAR_STATE, currentTime);
@@ -273,14 +301,35 @@ void reset() {
     // Reset players scores
     game.getPlayerOne().reset();
     game.getPlayerTwo().reset();
-    display.rotationTimer.clear();
-    display.turnTimer.clear();
-    display.updateScoreDisplay(0, 0)
+    rotationTimer.clear();
+    // display.turnTimer.clear();
+    // display.updateScoreDisplay(0, 0);
+    player1Score.showNumberDec(0);  // Show the player one's score
+    player2Score.showNumberDec(0);
 
     // Reset board colour
-    setBorderColor(PLAYER_1_COLOR)
+    // setBorderColor(PLAYER_1_COLOR)
 }
 
 bool checkReset() {
     return digitalRead(buttonPin) == LOW;
+}
+
+void updateRotationTimer(unsigned long time) {
+    if (time > TIMER_LIMIT) {
+      time = 0;
+    }
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the rotation timer (as XX.XX format)
+    rotationTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
+}
+
+void updateTurnTimer(unsigned long time) {
+    int seconds = time / 1000;            // Get the whole number of seconds
+    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
+    
+    // Display the time on the turn timer (as XX.XX format)
+    turnTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
 }
