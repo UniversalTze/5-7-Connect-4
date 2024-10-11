@@ -10,6 +10,7 @@
 
 class BoardDisplay {
 public:
+    int colourNum;
     BoardDisplay();
 
     void animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]);
@@ -17,7 +18,7 @@ public:
     void updateRotationTimer(unsigned long time);
     void updateTurnTimer(unsigned long time);
     void animateComboClear(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
-    int* getRandomColor();
+    int getRandomColor();
     void animateFullBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]);
     // void placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]);
 
@@ -28,7 +29,7 @@ public:
     TM1637Display turnTimer;
 
 private:
-    void setPixelColor(int row, int col, const int color[3]);
+    void setPixelColor(int row, int col, int *color);
     int getPixelIndex(int row, int col);
 };
 

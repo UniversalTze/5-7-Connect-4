@@ -610,13 +610,13 @@
     {
         if (frameTracker < BOARD_HEIGHT) {
             board[frameTracker % BOARD_HEIGHT][0] = (state % 2) ? PLAYER_1 : PLAYER_2;
-            board[0][frameTracker % BOARD_HEIGHT] = (state % 2) ? PLAYER_1 : PLAYER_2;
+            board[0][frameTracker % BOARD_HEIGHT] = (state % 2) ? PLAYER_2 : PLAYER_1;
         }
         else if (frameTracker < BOARD_HEIGHT * 2) {
             board[frameTracker % BOARD_HEIGHT][0] = EMPTY;
             board[0][frameTracker % BOARD_HEIGHT] = EMPTY;
             board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = (state % 2) ? PLAYER_1 : PLAYER_2;
-            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = (state % 2) ? PLAYER_1 : PLAYER_2;
+            board[frameTracker % BOARD_HEIGHT][BOARD_HEIGHT - 1] = (state % 2) ? PLAYER_2 : PLAYER_1;
         }
         else {
             board[BOARD_HEIGHT - 1][frameTracker % BOARD_HEIGHT] = EMPTY;

@@ -51,7 +51,7 @@ void BoardDisplay::updateTurnTimer(unsigned long time) {
 }
 
 // Method for setting the pixel color
-void BoardDisplay::setPixelColor(int row, int col, const int color[3]) {
+void BoardDisplay::setPixelColor(int row, int col, int *color) {
   strip.setPixelColor(getPixelIndex(row, col), color[0], color[1], color[2]);
 }
 
@@ -60,19 +60,40 @@ int BoardDisplay::getPixelIndex(int row, int col) {
 }
 
 void BoardDisplay::animateComboClear(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
+
+
+    int randomNumber = rand() % 4;
+    int randomColor[3] = {0, 0, 0};
+
+    switch(randomNumber) {
+      case 0:
+        randomColor[1] = 255;
+        break;
+      case 1:
+        randomColor[2] = 255;
+        break;
+      case 2:
+        randomColor[0] = 255;
+        randomColor[2] = 255;
+        break;
+      case 3:
+        randomColor[1] = 255;
+        randomColor[2] = 255;
+        break;
+    }
+
     for (int i = 0; i < BOARD_HEIGHT; i++) {
         for (int j = 0; j < BOARD_WIDTH; j++) {
             if (previousBoard[i][j] != clearedBoard[i][j]) {
-                setPixelColor(i, j, getRandomColor());
+                setPixelColor(i, j, randomColor);
             }
         }
     }
     strip.show(); // Added this from the original code
 }
 
-const int* BoardDisplay::getRandomColor() {
-    int randomIndex = rand() % (sizeof(RAINBOW) / sizeof(RAINBOW[0]));
-    return RAINBOW[randomColorIndex];
+int BoardDisplay::getRandomColor() {
+    return rand() % 5;
 }
 
 void BoardDisplay::animateFullBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {

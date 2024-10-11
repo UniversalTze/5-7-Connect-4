@@ -17,12 +17,16 @@ constexpr int PLAYER_2 = 2;
 constexpr const int EMPTY_COLOR[3] = {0, 0, 0};
 constexpr const int PLAYER_1_COLOR[3] = {255, 0, 0};
 constexpr const int PLAYER_2_COLOR[3] = {255, 255, 0};
-constexpr const int WHITE[3] = {0, 0, 255};
-constexpr const int RAINBOW[][3] = {
-  {255, 0, 0}, // Red
+
+constexpr const int GREEN[3] = {0, 255, 0};
+constexpr const int BLUE[3] = {0, 0, 255};
+constexpr const int MAGENTA[3] = {255, 0, 255};
+constexpr const int CYAN[3] = {0, 255, 255};
+constexpr const int OLIVE[3] = {128, 128, 0};
+
+constexpr const int RAINBOW[8][3] = {
   {0, 255, 0}, // Green
   {0, 0, 255}, // Blue
-  {255, 255, 0}, // Yellow
   {255, 0, 255}, // Magenta
   {0, 255, 255}, // Cyan
   {128, 0, 0}, // Maroon
@@ -56,7 +60,7 @@ constexpr int PLAYER_TURN_DISPLAY = 2;
 constexpr int BOARD_ROTATION_DISPLAY = 1;
 
 // Scoring
-constexpr int WINNING_SCORE = 21;
+constexpr int WINNING_SCORE = 4;
 
 // Win States
 constexpr int NO_WIN = 0;
@@ -66,19 +70,19 @@ constexpr int DRAW = 3;
 constexpr int LED_PIN = 13;
 constexpr int LED_COUNT = 300;
 constexpr int LED_IDS[7][7] = {
-  {42, 43, 44, 45, 46, 47, 48},  // Column 0 (bottom -> top)
-  {41, 40, 39, 38, 37, 36, 35},  // Column 1
-  {28, 29, 30, 31, 32, 33, 34},  // Column 2
-  {27, 26, 25, 24, 23, 22, 21},  // Column 3
-  {14, 15, 16, 17, 18, 19, 20},  // Column 4
-  {13, 12, 11, 10,  9,  8,  7},  // Column 5
-  { 0,  1,  2,  3,  4,  5,  6}   // Column 6
+  {20, 26, 70, 75, 119, 124, 168}, // Column 0 (bottom -> top)
+  {17, 29, 67, 78, 116, 127, 165}, // Column 1
+  {13, 33, 63, 82, 112, 131, 161}, // Column 2
+  {10, 36, 60, 85, 109, 134, 158}, // Column 3
+  {7,  39, 57, 88, 106, 137, 155}, // Column 4
+  {4,  42, 54, 92, 103, 140, 152}, // Column 5
+  {1,  45, 51, 94, 100, 143, 149}  // Column 6
 };
 
 
 // Inputs
 constexpr int COLUMN_PINS[7] = {11, A5, A4, A3, A2, A1, A0};
-constexpr int SENSOR_THRESHOLDS[7] = {-1, 650, 700, 650, 550, 550, 650};
+constexpr int SENSOR_THRESHOLDS[7] = {-1, 650, 750, 650, 550, 550, 700};
 constexpr int DEBOUNCE_DELAY = 1000;
 constexpr int buttonPin = 10;
 

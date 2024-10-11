@@ -155,15 +155,17 @@ void loop() {
                 Serial.println("pretend animation done, go back to tokens falling");
                 changeState(TOKEN_FALLING_STATE, currentTime);
                 win_state = game.checkWin();
-                if (win_state) {
+                Serial.println(win_state);
+                if (win_state != 0) {
                     changeState(WIN_STATE, currentTime);
+                    board.clearBoard();
+                    display.animateBoard(board.board);
+
                 }
             }
             break;
         case WIN_STATE:
             int winner = win_state;
-            board.clearBoard();
-            display.animateBoard(board.board);
 
             if (win_state == PLAYER_1 || win_state == PLAYER_2) {
                 if (currentTime - previousTime >= 85) {
