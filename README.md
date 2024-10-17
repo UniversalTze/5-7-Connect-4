@@ -39,13 +39,14 @@ We chose Connect 4 because it’s simple, appeals to a wide audience, and offers
 - By integrating with hardware, we aim to make the game more engaging and visually immersive.
 
 
-## Installation and Setup
+## Installation and Setup 
+### Web Prototype
 To run the project locally:
 
-### Requirements:
+#### Requirements:
 - Built using **JavaScript**, **HTML**, **CSS**, and **TypeScript**.
 
-### Steps:
+#### Steps:
 1. Clone the repository and navigate to the project directory:
    ```bash
    git clone https://github.com/haozhi-ryan/5-7-connect-4.git
@@ -57,7 +58,15 @@ To run the project locally:
    ```bash
    npm run dev
 6. A local web link should appear in the terminal. Open the link in your browser to view and play the game.
+7. Controls: Click at column to place token, press 'r' to restart game.
 
+### Physical Prototype
+To upload the code to the physical prototyle:
 
+#### Requirements:
+- Ensure Arduino IDE and libraries 'Adafruit_NeoPixel' and 'TM1637_display' are installed
 
+#### Steps:
+1. Clone the repository and open final-prototype/final-prototype.ino in Arduino IDE
+2. Press upload button
 --------------------------------------------------------------------
