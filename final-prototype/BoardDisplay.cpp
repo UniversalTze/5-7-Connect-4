@@ -1,15 +1,17 @@
 #include "BoardDisplay.h"
 #include <stdlib.h>
 
+/**
+ * @brief Constructs a BoardDisplay object and initializes the LED strip with the specified configuration.
+ */
 BoardDisplay::BoardDisplay()
     : strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800){}//, 
-      // player1Score(p1ScoreClkPin, p1ScoreDioPin),
-      // player2Score(p2ScoreClkPin, p2ScoreDioPin),
-      // rotationTimer(rotationClkPin, rotationDioPin),
-      // turnTimer(turnClkPin, turnDioPin) 
-      
 
-// Method to animate the board
+/**
+ * @brief Animates the board by setting the colors of each pixel based on the current board state.
+ * 
+ * @param currentBoard The current state of the board represented as a 2D array.
+ */
 void BoardDisplay::animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
     for (int row = 0; row < BOARD_HEIGHT; row++) {
         for (int col = 0; col < BOARD_WIDTH; col++) {
@@ -25,44 +27,35 @@ void BoardDisplay::animateBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
     strip.show();
 }
 
-// Method to update the score display
-void BoardDisplay::updateScoreDisplay(int playerOneScore, int playerTwoScore) {
-    Serial.print("Player 1 Score: ");
-    Serial.println(playerOneScore);
-    Serial.print("Player 2 Score: ");
-    Serial.println(playerTwoScore);
-    // player1Score.showNumberDec(0);  // Show the player one's score
-    // player2Score.showNumberDec(0);  // Show the player two's score
-}
-
-void BoardDisplay::updateRotationTimer(unsigned long time) {
-    int seconds = time / 1000;            // Get the whole number of seconds
-    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
-    
-    // Display the time on the rotation timer (as XX.XX format)
-    // rotationTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
-}
-
-void BoardDisplay::updateTurnTimer(unsigned long time) {
-    int seconds = time / 1000;            // Get the whole number of seconds
-    int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
-    
-    // Display the time on the turn timer (as XX.XX format)
-    // turnTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
-}
-
-// Method for setting the pixel color
+/**
+ * @brief Sets the color of a specific pixel on the board.
+ * 
+ * @param row The row index of the pixel.
+ * @param col The column index of the pixel.
+ * @param color An array representing the RGB values of the color.
+ */
 void BoardDisplay::setPixelColor(int row, int col, int *color) {
   strip.setPixelColor(getPixelIndex(row, col), color[0], color[1], color[2]);
 }
 
+/**
+ * @brief Retrieves the LED strip index corresponding to a specific board position.
+ * 
+ * @param row The row index of the board.
+ * @param col The column index of the board.
+ * @return The pixel index in the LED strip.
+ */
 int BoardDisplay::getPixelIndex(int row, int col) {
     return LED_IDS[col][6-row];
 }
 
+/**
+ * @brief Animates the clearing of a combo on the board with a random color effect.
+ * 
+ * @param previousBoard The previous state of the board before the combo clear.
+ * @param clearedBoard The board state after the combo has been cleared.
+ */
 void BoardDisplay::animateComboClear(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
-
-
     int randomNumber = rand() % 4;
     int randomColor[3] = {0, 0, 0};
 
@@ -93,10 +86,20 @@ void BoardDisplay::animateComboClear(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH
     strip.show(); // Added this from the original code
 }
 
+/**
+ * @brief Generates a random color for board animations.
+ * 
+ * @return A random color index.
+ */
 int BoardDisplay::getRandomColor() {
     return rand() % 5;
 }
 
+/**
+ * @brief Animates the board by displaying its current state, updating pixel colors based on the board configuration.
+ * 
+ * @param currentBoard The current state of the board represented as a 2D array.
+ */
 void BoardDisplay::animateFullBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
     for (int row = 0; row < BOARD_HEIGHT; row++) {
         for (int col = 0; col < BOARD_WIDTH; col++) {
@@ -111,16 +114,3 @@ void BoardDisplay::animateFullBoard(int currentBoard[BOARD_HEIGHT][BOARD_WIDTH])
     }
     strip.show(); // Added this from the original code
 }
-
-// // Method for placeholder animation
-// void BoardDisplay::placeholder(int previousBoard[BOARD_HEIGHT][BOARD_WIDTH], int clearedBoard[BOARD_HEIGHT][BOARD_WIDTH]) {
-    
-//     for (int i = 0; i < BOARD_HEIGHT; i++) {
-//         for (int j = 0; j < BOARD_WIDTH; j++) {
-//             if (previousBoard[i][j] != clearedBoard[i][j]) {
-//                 setPixelColor(i, j, WHITE);
-//             }
-//         }
-//     }
-//     strip.show();
-// }

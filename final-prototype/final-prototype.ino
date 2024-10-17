@@ -7,8 +7,8 @@ Board board;
 BoardDisplay display;
 Game game;
 
+// Declare variables for input, time tracking, and game state
 int columnInput = NO_INPUT;
-
 unsigned long previousTime = 0;
 unsigned long previousRotationTime = 0;
 int win_state = NO_WIN;
@@ -18,6 +18,7 @@ unsigned long previousInputTime = 0;
 int frameCounter = 0;
 int drawAnimation = 0;
 
+// Initialize the photoresistor LED strip
 Adafruit_NeoPixel photoresistorLED(22, 12, NEO_GRB + NEO_KHZ800);
 
 TM1637Display player1Score = TM1637Display(p1ScoreClkPin, p1ScoreDioPin);
@@ -54,11 +55,12 @@ void setup() {
     pinMode(buttonPin, INPUT_PULLUP);
 
     delay(1000);
+
+    // Set initial game state
     unsigned long currentTime = millis();
 
     changeState(WAIT_FOR_TOKEN_STATE, currentTime);
     previousRotationTime = currentTime;
-    // display.updateScoreDisplay(0, 0);
     player1Score.showNumberDec(0);  // Show the player one's score
     player2Score.showNumberDec(0);  
 }
@@ -83,7 +85,8 @@ void loop() {
             updateTurnTimer(remainingTurnTime);
             
             unsigned long flashTime = remainingTurnTime % FLASH_CYCLE;
-
+            
+            // Flash the current player's score display
             if (game.getCurrentPlayer() == PLAYER_1) {
               if (flashTime >= FLASH_ON) {
                 player1Score.clear();
@@ -98,6 +101,7 @@ void loop() {
               }
             }
 
+            // Check for board rotation condition
             if (timeTilRotation >= TIMER_LIMIT) {
                 Serial.println("uh oh! board is rotatin!");
                 board.rotateBoard(90);
@@ -107,6 +111,7 @@ void loop() {
                 break;
             }
 
+            // Check if the current player has run out of time
             if (remainingTurnTime >= TIMER_LIMIT) {
                 Serial.print("player ");
                 Serial.print(game.getCurrentPlayer());
@@ -124,7 +129,8 @@ void loop() {
 
             Serial.print("token detected at ");
             Serial.println(columnInput);
-
+            
+            // Attempt to place the token and handle error
             if (board.placeToken(columnInput, game.getCurrentPlayer())) {
                 player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
                 player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());
@@ -157,7 +163,6 @@ void loop() {
                     game.getPlayerTwo().addPlayerScore(points[1]);
                     player1Score.showNumberDec(game.getPlayerOne().getPlayerScore());  // Show the player one's score
                     player2Score.showNumberDec(game.getPlayerTwo().getPlayerScore());  
-                    // display.updateScoreDisplay(game.getPlayerOne().getPlayerScore(), game.getPlayerTwo().getPlayerScore());
                     if (linesCleared) {
                         Serial.println("linefound");
                         changeState(ANIMATE_LINE_CLEAR_STATE, currentTime);
@@ -178,6 +183,7 @@ void loop() {
             }
             break;
         case ANIMATE_LINE_CLEAR_STATE:
+            // Handle the animation state for clearing lines
             if (currentTime - previousTime >= 1000) {
                 display.animateBoard(board.board);
                 Serial.println("pretend animation done, go back to tokens falling");
@@ -196,6 +202,7 @@ void loop() {
             int winner = win_state;
 
             if (win_state == PLAYER_1 || win_state == PLAYER_2) {
+                // Animate the winning sequence for the current player
                 if (currentTime - previousTime >= 85) {
                     board.WinSnakeAround(winner, frameCounter);
                     frameCounter++;
@@ -243,23 +250,25 @@ void loop() {
             }
             break;
     }
-
-    // if (columnInput != NO_INPUT) {
-    //     Serial.println("ERROR: token detected outside wait for token state");
-    //     // Handle error behavior here e.g., play sound
-    // }
-    // columnInput = NO_INPUT;
 }
 
+/**
+ * @brief Changes the current state of the game and updates the timestamp of when the state change occurred.
+ * 
+ * @param newState The new state to change to.
+ * @param currentTime The current time in milliseconds, used to track when the state change occurred.
+ */
 void changeState(int newState, unsigned long currentTime) {
     state = newState;
     previousTime = currentTime;
 }
 
-void setBorderColor(const int color[3]) {
-
-}
-
+/**
+ * @brief Checks for column input from the player and debounces the input to avoid multiple detections.
+ * 
+ * @param currentTime The current time in milliseconds, used for debouncing logic.
+ * @return The index of the column where a token was detected or NO_INPUT if no valid input was detected.
+ */
 int getColumnInput(unsigned long currentTime) {
   if (currentTime - previousInputTime < DEBOUNCE_DELAY) {
     return NO_INPUT;
@@ -280,6 +289,9 @@ int getColumnInput(unsigned long currentTime) {
   return NO_INPUT;
 }
 
+/**
+ * @brief Resets the game state, board, player scores, and other variables to their initial values.
+ */
 void reset() {
     delay(1000);
 
@@ -302,19 +314,24 @@ void reset() {
     game.getPlayerOne().reset();
     game.getPlayerTwo().reset();
     rotationTimer.clear();
-    // display.turnTimer.clear();
-    // display.updateScoreDisplay(0, 0);
     player1Score.showNumberDec(0);  // Show the player one's score
     player2Score.showNumberDec(0);
-
-    // Reset board colour
-    // setBorderColor(PLAYER_1_COLOR)
 }
 
+/**
+ * @brief Checks if the reset button is pressed.
+ * 
+ * @return True if the reset button is pressed, otherwise false.
+ */
 bool checkReset() {
     return digitalRead(buttonPin) == LOW;
 }
 
+/**
+ * @brief Updates the rotation timer display with the remaining time until the next board rotation.
+ * 
+ * @param time The time in milliseconds until the next board rotation.
+ */
 void updateRotationTimer(unsigned long time) {
     if (time > TIMER_LIMIT) {
       time = 0;
@@ -322,14 +339,19 @@ void updateRotationTimer(unsigned long time) {
     int seconds = time / 1000;            // Get the whole number of seconds
     int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
     
-    // Display the time on the rotation timer (as XX.XX format)
+    // Display the time on the rotation timer
     rotationTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
 }
 
+/**
+ * @brief Updates the turn timer display with the remaining time for the player's turn.
+ * 
+ * @param time The time in milliseconds remaining for the player's turn.
+ */
 void updateTurnTimer(unsigned long time) {
     int seconds = time / 1000;            // Get the whole number of seconds
     int hundredths = (time % 1000) / 10;  // Get the hundredths of a second
     
-    // Display the time on the turn timer (as XX.XX format)
+    // Display the time on the turn timer
     turnTimer.showNumberDecEx(seconds * 100 + hundredths, 0b01000000, true);  // "0b01000000" adds the decimal point
 }
