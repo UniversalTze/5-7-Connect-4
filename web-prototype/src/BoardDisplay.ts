@@ -2,6 +2,13 @@ import * as constants from "./constants.ts";
 
 export class BoardDisplay {
   
+    /**
+   * @brief Updates the visual representation of the game board.
+   * 
+   * @param currentBoard - A 2D array representing the current state of the board, 
+   * where 0 represents an empty cell, 1 represents Player 1's piece, and 
+   * 2 represents Player 2's piece.
+   */
   animateBoard(currentBoard: number[][]) { 
     // Updates the board
     for (let row = 0; row < currentBoard.length; row++) {
@@ -20,7 +27,12 @@ export class BoardDisplay {
     }
   }
 
-  // Update's the score and score display for the players
+  /**
+   * @brief Updates the score display for both players.
+   * 
+   * @param playerOneScore - The current score of Player 1.
+   * @param playerTwoScore - The current score of Player 2.
+   */
   updateScoreDisplay(playerOneScore: number, playerTwoScore: number) {
     const playerOneScoreElement = document.getElementById("display-0");
     // Update Player 1's score
@@ -35,7 +47,13 @@ export class BoardDisplay {
     }
   }
 
-  // Method for setting the pixel color
+  /**
+   * @brief Sets the color of a specific pixel on the board.
+   * 
+   * @param row - The row index of the pixel.
+   * @param col - The column index of the pixel.
+   * @param color - The color to set, represented as a string.
+   */
   private setPixelColor(row: number, col: number, color: string) {
     const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`) as HTMLElement;
     if (cellElement) {
@@ -43,6 +61,13 @@ export class BoardDisplay {
     }
   }
 
+  /**
+   * @brief Animates a clear combo on the board by setting random colors 
+   * for cells that have changed.
+   * 
+   * @param previousBoard - The state of the board before the combo was cleared.
+   * @param clearedBoard - The state of the board after the combo was cleared.
+   */
   public animateComboClear(previousBoard: number[][], clearedBoard: number[][]): void {
     for (let i = 0; i < constants.BOARD_HEIGHT; i++) {
       for (let j = 0; j < constants.BOARD_WIDTH; j++) {
@@ -53,13 +78,23 @@ export class BoardDisplay {
     }
   }
 
-  // Returns a random colour
+  /**
+   * @brief Returns a random color from a given array of colors.
+   * 
+   * @param RAINBOW - An array of color strings to choose from.
+   * @return A random color as a string.
+   */
   getRandomColor(RAINBOW: string[]) {
     const randomIndex = Math.floor(Math.random() * RAINBOW.length);
     return RAINBOW[randomIndex];
   }
 
-  // Animates the board when it's full
+  /**
+   * @brief Animates the board when it's full by setting random colors for 
+   * Player 1 and Player 2 pieces.
+   * 
+   * @param currentBoard - A 2D array representing the current state of the board.
+   */
   animateFullBoard(currentBoard: number[][]) {
     for (let row = 0; row < currentBoard.length; row++) {
       for (let col = 0; col < currentBoard[row].length; col++) {
@@ -76,51 +111,6 @@ export class BoardDisplay {
       }
     }
   } 
-
-  // Show a pop up message for restarting the game
-  // showPopup(message: string, resetCallback: () => void) {
-  //   const popup = document.getElementById("popup");
-  //   const popupContent = document.querySelector("#popup .popup-content") as HTMLElement;
-  
-  //   if (popup && popupContent) {
-  //     // Set the message
-  //     const messageElement = popupContent.querySelector("p");
-  //     if (messageElement) {
-  //       messageElement.innerText = message;
-  //     }
-  
-  //     // Add a button to the popup
-  //     const actionButton = document.createElement("button");
-  //     actionButton.innerText = "Play again";
-  //     actionButton.addEventListener("click", () => {
-  //       console.log("Restarting the game...");
-  //       popup.style.display = "none";
-  //       resetCallback(); // Call the reset function passed as a parameter
-  //     });
-  
-  //     // Remove any existing action buttons to avoid duplication
-  //     const existingButton = popupContent.querySelector("button");
-  //     if (existingButton) {
-  //       existingButton.remove();
-  //     }
-  
-  //     // Append the new button
-  //     popupContent.appendChild(actionButton);
-  
-  //     // Show the popup
-  //     popup.style.display = "flex";
-  
-  //     // Close button to hide the popup
-  //     const closePopupButton = document.getElementById("closePopup");
-  //     if (closePopupButton) {
-  //       closePopupButton.addEventListener("click", () => {
-  //         popup.style.display = "none";
-  //       });
-  //     }
-  //   }
-  // }
-  
-
 }
 
 
