@@ -9,12 +9,12 @@ Authors:
 - ThePyromancer1
 - haozhi-ryan
 
-# 5-7 Connect 4 Web Prototype
+# 5-7 Connect 4
 
 ## Description
-This web app is a new take on the classic Connect 4 game, designed to be dynamic and engaging while preserving the essence of the original game. Two players compete to score points by forming combos of four or more pieces in a row—horizontally, vertically, or diagonally—within a set time. Unique mechanics like disappearing rows and a rotating board will be an addition to the traditional gameplay.
+This game is a new take on the classic Connect 4, designed to be dynamic and engaging while preserving the essence of the original game. Two players compete to score points by forming combos of four or more pieces in a row—horizontally, vertically, or diagonally—within a set time. Unique mechanics like disappearing rows and a rotating board will be an addition to the traditional gameplay.
 
-We are using **JavaScript**, **HTML**, and **CSS** for this web prototype to enable quicker development and easier debugging. Later, it will be converted into C++ and integrated with the hardware using Arduino. The final product is a technology-enhanced tabletop game that enriches connect 4's traditional gameplay by making it more interactive and immersive. 
+We are using **JavaScript**, **HTML**, and **CSS** for this web prototype to enable quicker development and easier debugging. We later converted the web prototype into C++ and integrated with the hardware using Arduino. The final product is a technology-enhanced tabletop game that enriches connect 4's traditional gameplay by making it more interactive and immersive. 
 
 ### Features
 - Two-player game with a timed piece placement.
@@ -22,10 +22,10 @@ We are using **JavaScript**, **HTML**, and **CSS** for this web prototype to ena
 - The game ends when time runs out, and the player with the highest score wins.
 - Scored rows disappear, and pieces above fall down like gravity.
 - The board randomly rotates at intervals, shifting pieces and creating new opportunities.
-- Incorporates visual elements like flashing lights and sound effects to enhance the game’s interactivity.
+- Incorporates visual elements like flashing lights to enhance the game’s interactivity.
 
-## Purpose of the Prototype
-This prototype helps test and fine-tune game mechanics and visuals before transitioning to hardware with Arduino. It allows us to:
+## Purpose of the Web Prototype
+This Web prototype helps test and fine-tune game mechanics and visuals before transitioning to hardware with Arduino. It allows us to:
 - Test game mechanics early and ensure the project stays on track.
 - Refine gameplay elements and visual displays.
 - Conduct user surveys and gather feedback to iterate the design.
@@ -34,8 +34,8 @@ This prototype helps test and fine-tune game mechanics and visuals before transi
 ## Why Connect 4?
 We chose Connect 4 because it’s simple, appeals to a wide audience, and offers great potential for enhancement. 
 - Board games foster communication, collaboration, and a sense of community.
-- They offer fun and challenge, helping players build problem-solving skills and empathy.
-- Our twist on the game—adding rotating boards and disappearing rows—creates a dynamic, fun experience that balances strategy and skill.
+- They offer fun and different challenges, helping players build problem-solving skills and empathy.
+- Our twist on the different dynamic features like rotating boards and disappearing rows creates a sprited, fun experience that balances strategy and skill.
 - By integrating with hardware, we aim to make the game more engaging and visually immersive.
 
 
@@ -71,4 +71,5 @@ To upload the code to the physical prototype:
    ```bash
    git clone https://github.com/haozhi-ryan/5-7-connect-4.git
 3. Press upload.
+4. Enjoy the Game!!!
 --------------------------------------------------------------------
