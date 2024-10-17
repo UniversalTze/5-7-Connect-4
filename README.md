@@ -67,8 +67,8 @@ To upload the code to the physical prototyle:
 - Ensure Arduino IDE and libraries 'Adafruit_NeoPixel' and 'TM1637_display' are installed
 
 #### Steps:
-1. Clone the repository and open final-prototype/final-prototype.ino in Arduino IDE
+1. Clone the repository and open final-prototype/final-prototype.ino in Arduino IDE.
    ```bash
    git clone https://github.com/haozhi-ryan/5-7-connect-4.git
-3. Press upload button
+3. Press upload.
 --------------------------------------------------------------------
