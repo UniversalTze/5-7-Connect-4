@@ -68,5 +68,7 @@ To upload the code to the physical prototyle:
 
 #### Steps:
 1. Clone the repository and open final-prototype/final-prototype.ino in Arduino IDE
-2. Press upload button
+   ```bash
+   git clone https://github.com/haozhi-ryan/5-7-connect-4.git
+3. Press upload button
 --------------------------------------------------------------------
