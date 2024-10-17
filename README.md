@@ -61,10 +61,10 @@ To run the project locally:
 7. Controls: Click at column to place token, press 'r' to restart game.
 
 ### Physical Prototype
-To upload the code to the physical prototyle:
+To upload the code to the physical prototype:
 
 #### Requirements:
-- Ensure Arduino IDE and libraries 'Adafruit_NeoPixel' and 'TM1637_display' are installed
+- Ensure Arduino IDE and libraries 'Adafruit_NeoPixel' and 'TM1637_display' are installed.
 
 #### Steps:
 1. Clone the repository and open final-prototype/final-prototype.ino in Arduino IDE.
