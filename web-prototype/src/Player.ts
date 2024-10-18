@@ -41,4 +41,11 @@ export class Player {
         this.playerScore = this.playerScore + score;
     }
 
+    /**
+     * @brief Resets the player's score to zero.
+     */
+    public resetPlayerScore(): void {
+        this.playerScore = 0; // Set the player's score to zero
+    }
+
 }
