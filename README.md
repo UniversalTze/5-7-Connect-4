@@ -46,7 +46,7 @@ To run the project locally:
 #### Requirements:
 - Built using **JavaScript**, **HTML**, **CSS**, and **TypeScript**.
 
-#### Steps:
+#### Steps to start the game:
 1. Clone the repository and navigate to the project directory:
    ```bash
    git clone https://github.com/haozhi-ryan/5-7-connect-4.git
@@ -60,6 +60,26 @@ To run the project locally:
 6. A local web link should appear in the terminal. Open the link in your browser to view and play the game.
 7. Controls: Click at column to place token, press 'r' to restart game.
 
+### Gameplay
+<img width="1440" alt="Screen Shot 2024-10-18 at 10 40 14 am" src="https://github.com/user-attachments/assets/e2018b93-7721-4eb8-8987-a18bc1d24e42">
+
+#### Pregame context
+- Click on any circles in the valid columns to place a token
+- Scores, turn timer and rotation timer can be seen at the bottom of the board. 
+- The current colour around the border of the board represents current player's turn. (Player 1 - Red, Player 2 - Yellow). 
+- When the turn timer runs out, the colour of the border changes, indicating that it is the other player's turn. 
+- When the rotation timer descends to zero, the board will rotate causing the pieces to fall and the turn timer is reset after this action. 
+
+#### In Game Loop 
+- When a player forms a streak of four or more tokens, an animation will trigger, causing the connected tokens to disappear. This action will then allow the tokens above the cleared streak to shift down by one row, filling the empty spaces.
+- When tokens fill this empty space, the current players runs the risk of also creating streaks for the other player.
+- The tokens that dissapear from the board are added to respective player's score.
+
+#### End Game
+- When a player reaches 21 points or more, they will have won the game. This will trigger a win animation
+- If both players reach 21 points or more at the same time, this is considered a draw. This triggers a different animation.
+- Players can choose to restart the game by pressing 'r'.
+
 ### Physical Prototype
 To upload the code to the physical prototype:
 
@@ -72,4 +92,8 @@ To upload the code to the physical prototype:
    git clone https://github.com/haozhi-ryan/5-7-connect-4.git
 3. Press upload.
 4. Enjoy the Game!!!
+
+#### Note:
+- The physical prototype's gameplay is identical to web-prototype, with the only difference being the use of hardware components in place of html.
+- The labels can be found on the physical board. 
 --------------------------------------------------------------------
